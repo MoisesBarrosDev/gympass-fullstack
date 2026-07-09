@@ -15,6 +15,8 @@ app.setErrorHandler((error, _request, reply) => {
   }
   if (env.NODE_ENV !== "production") {
     console.error(error);
-  }
+    // TODO: aqui deveriamos fazer um log para uma ferramenta externa como um DataDog/NewRelic/Sentry, porque 
+    // em produção não fazemos esse console.error Isso são ferramentas de observabilidade. 
+  }    
   return reply.status(500).send({ message: "Internal server error." });
 });
