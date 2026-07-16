@@ -5,7 +5,7 @@ import { InMemoryUsersRepository } from "../repositories/in-memory/in-memory-use
 import { UserAlreadyExistsError } from "./errors/user-already-exists-error.js";
 
 describe("Register Use Case", () => {
-   test("should be able to register", async () => {
+  test("should be able to register", async () => {
     const inMemoryRepository = new InMemoryUsersRepository();
     const registerUseCase = new RegisterUseCase(inMemoryRepository);
 
@@ -45,12 +45,12 @@ describe("Register Use Case", () => {
       password: "123456789",
     });
 
-     await expect( 
+    await expect(() =>
       registerUseCase.registerServices({
         name: "Lionel",
         email: "lionel55@gmail.com",
         password: "123456789",
       }),
-    ).rejects.toBeInstanceOf(UserAlreadyExistsError)
+    ).rejects.toBeInstanceOf(UserAlreadyExistsError);
   });
 });
