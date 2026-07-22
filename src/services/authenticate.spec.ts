@@ -1,0 +1,54 @@
+import { expect, describe, test } from "vitest";
+import { InMemoryUsersRepository } from "../repositories/in-memory/in-memory-users-repository.js";
+import { Authenticate } from "./authenticate.js";
+import { hash } from "bcryptjs";
+import { InvalidCredentialsError } from "./errors/invalid-credential-error.js";
+
+describe("Authenticate Use Case", () => {
+  test("should be able to authenticate", async () => {
+    const inMemoryRepository = new InMemoryUsersRepository();
+    const sut = new Authenticate(inMemoryRepository);
+
+    await inMemoryRepository.create({
+      name: "lionel",
+      email: "lionel10@gmail.com",
+      password_hash: await hash("123456789", 6),
+    });
+
+    const { user } = await sut.execute({
+      email: "lionel10@gmail.com",
+      password: "123456789",
+    });
+
+    expect(user.id).toEqual(expect.any(String));
+  });
+
+  test("should not be able to authenticate with wrong email", async () => {
+    const inMemoryRepository = new InMemoryUsersRepository();
+    const sut = new Authenticate(inMemoryRepository);
+    
+    expect(()=> sut.execute({
+      email: "lionel1@gmail.com",
+      password: "123456789",
+    })).rejects.toBeInstanceOf(InvalidCredentialsError)
+    
+  });
+
+    test("should not be able to authenticate with wrong password", async () => {
+    const inMemoryRepository = new InMemoryUsersRepository();
+    const sut = new Authenticate(inMemoryRepository);
+
+     await inMemoryRepository.create({
+      name: "lionel",
+      email: "lionel1@gmail.com",
+      password_hash: await hash("123456", 6),
+    });
+    
+    expect(()=> sut.execute({
+      email: "lionel1@gmail.com",
+      password: "123456789",
+    })).rejects.toBeInstanceOf(InvalidCredentialsError)
+    
+  });
+
+});
