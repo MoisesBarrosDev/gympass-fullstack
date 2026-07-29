@@ -5,6 +5,7 @@ import type { GymsRepository } from "../gyms-repository.js";
 
 export class InMemoryGymsRepository implements GymsRepository {
   public items: Gym[] = [];
+  public gymExclude: Gym[] = [];
 
   async findById(id: string) {
     const gym = this.items.find((item) => item.id === id);
@@ -26,6 +27,18 @@ export class InMemoryGymsRepository implements GymsRepository {
 
     this.items.push(gym);
 
+    return gym;
+  }
+
+  async delete(id: string): Promise<Gym | null> {
+    const gymIndex = this.items.findIndex((item) => item.id === id);
+    const gym = this.items[gymIndex];
+
+    if (!gym) return null;
+
+    this.items.splice(gymIndex, 1);
+    this.gymExclude.push(gym);
+     
     return gym;
   }
 }

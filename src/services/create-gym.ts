@@ -2,6 +2,7 @@ import type { Gym } from "../generated/prisma/client.js";
 import type { GymsRepository } from "../repositories/gyms-repository.js";
 
 interface CreateGymUseCaseRequest {
+  id?: string ;
   title: string;
   description: string | null;
   phone: string | null;
