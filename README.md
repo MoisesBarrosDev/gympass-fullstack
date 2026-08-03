@@ -15,7 +15,7 @@ GymPass style app.
 - [ ] Deve ser possível validar o check-in de um usuário;
 - [x] Deve ser possível cadastrar uma academia;
 - [x] Deve ser possível excluir uma academia cadastrada;
-- [ ] Deve ser possível recuperar uma academia excluída;
+- [x] Deve ser possível recuperar uma academia excluída;
 - [ ] Deve ser possível ler todas academias cadastradas;
 - [ ] Deve ser possível atualizar informações de academias cadastradas;
 

@@ -5,10 +5,18 @@ import type { GymsRepository } from "../gyms-repository.js";
 
 export class InMemoryGymsRepository implements GymsRepository {
   public items: Gym[] = [];
-  public gymExclude: Gym[] = [];
+  public deletedGyms: Gym[] = [];
 
   async findById(id: string) {
     const gym = this.items.find((item) => item.id === id);
+
+    if (!gym) return null;
+
+    return gym;
+  }
+
+  async findDeletedById(id: string) {
+    const gym = this.deletedGyms.find((item) => item.id === id);
 
     if (!gym) return null;
 
@@ -30,15 +38,27 @@ export class InMemoryGymsRepository implements GymsRepository {
     return gym;
   }
 
-  async delete(id: string): Promise<Gym | null> {
+  async deleteById(id: string): Promise<Gym | null> {
     const gymIndex = this.items.findIndex((item) => item.id === id);
     const gym = this.items[gymIndex];
 
     if (!gym) return null;
 
     this.items.splice(gymIndex, 1);
-    this.gymExclude.push(gym);
-     
+    this.deletedGyms.push(gym);
+
+    return gym;
+  }
+
+  async restoreById(id: string): Promise<Gym | null> {
+    const gymIndex = this.deletedGyms.findIndex((item) => item.id === id);
+    const gym = this.deletedGyms[gymIndex];
+
+    if (!gym) return null;
+
+    this.deletedGyms.splice(gymIndex, 1);
+    this.items.push(gym);
+
     return gym;
   }
 }
