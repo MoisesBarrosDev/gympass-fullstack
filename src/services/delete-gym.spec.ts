@@ -44,6 +44,8 @@ describe("Delete Gym Use Case", () => {
   test("should not be able to delete a gym that is already deleted", async () => {
     const { gym } = await createGym.execute({
       title: "JavaScript Gym",
+      description: "A melhor academia do Brasil",
+      phone: "(99)99999-9999",
       latitude: -22.872064,
       longitude: -43.237376,
     });

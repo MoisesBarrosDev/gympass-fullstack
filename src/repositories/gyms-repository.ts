@@ -7,4 +7,5 @@ export interface GymsRepository {
   create(data: GymCreateInput): Promise<Gym>;
   deleteById(id: string): Promise<Gym | null>;
   restoreById(id: string): Promise<Gym | null>;
+  findMany(): Promise<Gym[]>;
 }

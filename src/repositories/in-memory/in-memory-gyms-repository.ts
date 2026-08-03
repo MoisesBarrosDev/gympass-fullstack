@@ -61,4 +61,8 @@ export class InMemoryGymsRepository implements GymsRepository {
 
     return gym;
   }
+
+   async findMany(): Promise<Gym[]> {
+    return this.items
+  }
 }
