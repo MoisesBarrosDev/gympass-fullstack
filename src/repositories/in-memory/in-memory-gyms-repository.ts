@@ -62,7 +62,13 @@ export class InMemoryGymsRepository implements GymsRepository {
     return gym;
   }
 
-   async findMany(): Promise<Gym[]> {
+  async findMany(): Promise<Gym[]> {
+    return this.items;
+  }
+
+  async searchManyGyms(query: string, page: number): Promise<Gym[]> {
     return this.items
+      .filter((item) => item.title.includes(query))
+      .slice((page - 1) * 20, page * 20);
   }
 }

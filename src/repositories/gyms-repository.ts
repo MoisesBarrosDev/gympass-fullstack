@@ -8,4 +8,5 @@ export interface GymsRepository {
   deleteById(id: string): Promise<Gym | null>;
   restoreById(id: string): Promise<Gym | null>;
   findMany(): Promise<Gym[]>;
+  searchManyGyms(query: string, page: number): Promise<Gym[]>;
 }
