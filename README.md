@@ -9,7 +9,7 @@ GymPass style app.
 - [x] Deve ser possível obter o perfil de um usuário logado;
 - [x] Deve ser possível obter o número de check-ins realizados pelo usuário logado;
 - [x] Deve ser possível o usuário obter seu histórico de check-ins;
-- [ ] Deve ser possível o usuário buscar academias próximas;
+- [ ] Deve ser possível o usuário buscar academias próximas (até 10km);
 - [x] Deve ser possível o usuário buscar academias pelo nome;
 - [x] Deve ser possível o usuário realizar check-in em uma academia;
 - [ ] Deve ser possível validar o check-in de um usuário;
@@ -17,7 +17,7 @@ GymPass style app.
 - [x] Deve ser possível ler todas academias cadastradas;
 - [x] Deve ser possível excluir uma academia cadastrada;
 - [x] Deve ser possível recuperar uma academia excluída;
-- [ ] Deve ser possível atualizar informações de academias cadastradas;
+- [x] Deve ser possível atualizar informações de academias cadastradas;
 
 ## Rns (Regras de negócio)
 
