@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { Prisma, type Gym } from "../../generated/prisma/client.js";
 import type { GymCreateInput } from "../../generated/prisma/models.js";
-import type { GymsRepository } from "../gyms-repository.js";
+import type { GymsRepository, UpdateGymData } from "../gyms-repository.js";
 
 export class InMemoryGymsRepository implements GymsRepository {
   public items: Gym[] = [];
@@ -70,5 +70,37 @@ export class InMemoryGymsRepository implements GymsRepository {
     return this.items
       .filter((item) => item.title.includes(query))
       .slice((page - 1) * 20, page * 20);
+  }
+
+  async update(data: UpdateGymData): Promise<Gym | null> {
+    const currentGym = this.items.find((gym) => gym.id === data.id);
+
+    if (!currentGym) {
+      return null;
+    }
+
+    const updatedGym: Gym = {
+      ...currentGym,
+      title: data.title ?? currentGym.title,
+      description:
+        data.description !== undefined
+          ? data.description
+          : currentGym.description,
+      phone: data.phone !== undefined ? data.phone : currentGym.phone,
+      latitude:
+        data.latitude !== undefined
+          ? new Prisma.Decimal(data.latitude)
+          : currentGym.latitude,
+      longitude:
+        data.longitude !== undefined
+          ? new Prisma.Decimal(data.longitude)
+          : currentGym.longitude,
+    };
+
+    const gymIndex = this.items.findIndex((gym) => gym.id === data.id);
+
+    this.items[gymIndex] = updatedGym;
+
+    return updatedGym;
   }
 }
