@@ -26,7 +26,7 @@ export class UpdateGymUseCase {
     latitude,
     longitude,
   }: UpdateGymUseCaseRequest): Promise<UpdateGymUseCaseResponse> {
-    const gym = await this.gymsRepository.update({
+    const gym = await this.gymsRepository.updateGym({
       id,
       ...(title !== undefined && { title }),
       ...(description !== undefined && { description }),

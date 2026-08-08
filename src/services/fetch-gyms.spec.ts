@@ -12,28 +12,28 @@ describe("Fetch Gyms Use Case", () => {
   });
 
   test("should be able to fetch all active gyms", async () => {
-    await inMemoryGymsRepository.create({
+    await inMemoryGymsRepository.createGym({
       title: "TypeScript Gym",
       description: "A melhor academia do Brasil",
       phone: "(99)99999-9999",
       latitude: -22.872084,
       longitude: -43.237356,
     });
-    await inMemoryGymsRepository.create({
+    await inMemoryGymsRepository.createGym({
       title: "Java Gym",
       description: "A segunda melhor academia do Brasil",
       phone: "(99)99999-9999",
       latitude: -22.872094,
       longitude: -43.237346,
     });
-    await inMemoryGymsRepository.create({
+    await inMemoryGymsRepository.createGym({
       title: "C++ Gym",
       description: "A terceira melhor academia do Brasil",
       phone: "(99)99999-9999",
       latitude: -22.872064,
       longitude: -43.237336,
     });
-    await inMemoryGymsRepository.create({
+    await inMemoryGymsRepository.createGym({
       title: "C# Gym",
       description: "A quarta melhor academia do Brasil",
       phone: "(99)99999-9999",

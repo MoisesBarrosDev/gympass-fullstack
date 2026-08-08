@@ -12,11 +12,11 @@ describe("Get User Check-ins Count Use Case", () => {
   });
 
   test("should return the total number of check-ins made by a user", async () => {
-    await inMemoryCheckInsRepository.create({
+    await inMemoryCheckInsRepository.createCheckIn({
       gym_id: "gym01",
       user_id: "user01",
     });
-    await inMemoryCheckInsRepository.create({
+    await inMemoryCheckInsRepository.createCheckIn({
       gym_id: "gym02",
       user_id: "user01",
     });

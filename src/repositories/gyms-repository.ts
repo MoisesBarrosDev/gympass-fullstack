@@ -16,13 +16,13 @@ export interface FindManyNearbyProps {
 }
 
 export interface GymsRepository {
-  findById(id: string): Promise<Gym | null>;
-  findDeletedById(id: string): Promise<Gym | null>;
-  create(data: GymCreateInput): Promise<Gym>;
-  deleteById(id: string): Promise<Gym | null>;
-  restoreById(id: string): Promise<Gym | null>;
-  findMany(): Promise<Gym[]>;
+  findGymById(id: string): Promise<Gym | null>;
+  findDeletedGymById(id: string): Promise<Gym | null>;
+  createGym(data: GymCreateInput): Promise<Gym>;
+  deleteGymById(id: string): Promise<Gym | null>;
+  restoreGymById(id: string): Promise<Gym | null>;
+  findManyGyms(): Promise<Gym[]>;
   searchManyGyms(query: string, page: number): Promise<Gym[]>;
-  update(data: UpdateGymData): Promise<Gym | null>;
-  findManyNearby(params: FindManyNearbyProps): Promise<Gym[]>;
+  updateGym(data: UpdateGymData): Promise<Gym | null>;
+  findManyNearbyGyms(params: FindManyNearbyProps): Promise<Gym[]>;
 }

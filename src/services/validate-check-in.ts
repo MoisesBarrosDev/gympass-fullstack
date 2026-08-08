@@ -18,7 +18,7 @@ export class ValidateCheckInUseCase {
   async execute({
     checkInId,
   }: ValidateCheckInUseCaseRequest): Promise<ValidateCheckInUseCaseResponse> {
-    const checkIn = await this.checkInsRepository.findById(checkInId);
+    const checkIn = await this.checkInsRepository.findCheckInById(checkInId);
 
     if (!checkIn) {
       throw new ResourceNotFoundError();
@@ -35,7 +35,7 @@ export class ValidateCheckInUseCase {
 
     checkIn.validated_at = new Date();
 
-    await this.checkInsRepository.save(checkIn);
+    await this.checkInsRepository.saveCheckIn(checkIn);
 
     return { checkIn };
   }

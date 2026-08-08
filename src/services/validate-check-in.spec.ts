@@ -20,7 +20,7 @@ describe("Validate Check-in Use Case", () => {
   });
 
   test("should be able to validate a check-in", async () => {
-    const createdCheckIn = await inMemoryCheckInsRepository.create({
+    const createdCheckIn = await inMemoryCheckInsRepository.createCheckIn({
       gym_id: "gym-01",
       user_id: "user-01",
     });
@@ -47,7 +47,7 @@ describe("Validate Check-in Use Case", () => {
 
     vi.setSystemTime(new Date(2023, 0, 1, 13, 40)); // Data simulada
 
-    const createdCheckIn = await inMemoryCheckInsRepository.create({
+    const createdCheckIn = await inMemoryCheckInsRepository.createCheckIn({
       gym_id: "gym-01",
       user_id: "user-01",
     });

@@ -12,12 +12,12 @@ describe("Fetch Nearby Gyms Use Case", () => {
   });
 
   test("should be able to fetch nearby gyms", async () => {
-    await inMemoryGymsRepository.create({
+    await inMemoryGymsRepository.createGym({
       title: "JavaScript Gym",
       latitude: -22.7995141,
       longitude: -43.314695,
     });
-    await inMemoryGymsRepository.create({
+    await inMemoryGymsRepository.createGym({
       title: "TypeScript Gym",
       latitude: -22.332064,
       longitude: -21.217064,

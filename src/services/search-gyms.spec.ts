@@ -12,12 +12,12 @@ describe("Search Gyms Use Case", () => {
   });
 
   test("should be able to search gyms", async () => {
-    await inMemoryGymsRepository.create({
+    await inMemoryGymsRepository.createGym({
       title: "JavaScript Gym",
       latitude: -22.872064,
       longitude: -21.572064,
     });
-    await inMemoryGymsRepository.create({
+    await inMemoryGymsRepository.createGym({
       title: "TypeScript Gym",
       latitude: -22.332064,
       longitude: -21.217064,
@@ -45,7 +45,7 @@ describe("Search Gyms Use Case", () => {
 
   test("should be able to search gyms with pagination", async () => {
     for (let i = 1; i <= 22; i++) {
-      await inMemoryGymsRepository.create({
+      await inMemoryGymsRepository.createGym({
         title: `JavaScript Gym-${i}`,
         latitude: 22.33264,
         longitude: 22.112064,

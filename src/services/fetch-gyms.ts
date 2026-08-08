@@ -4,7 +4,7 @@ export class FetchGymsUseCase {
   constructor(private gymsRepository: GymsRepository) {}
 
   async execute() {
-    const gyms = await this.gymsRepository.findMany();
+    const gyms = await this.gymsRepository.findManyGyms();
 
     return {
       gyms,

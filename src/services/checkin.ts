@@ -29,7 +29,7 @@ export class CheckInUseCase {
     userLatitude,
     userLongitude,
   }: CheckInUseCaseRequest): Promise<CheckInUseCaseResponse> {
-    const gym = await this.gymsRepository.findById(gymId);
+    const gym = await this.gymsRepository.findGymById(gymId);
 
     if (!gym) {
       throw new ResourceNotFoundError();
@@ -49,7 +49,7 @@ export class CheckInUseCase {
       throw new MaxDistanceError();
     }
 
-    const checkInOnSameDay = await this.checkInsRepository.findByUserIdOnDate(
+    const checkInOnSameDay = await this.checkInsRepository.findCheckInByUserIdOnDate(
       userId,
       new Date(),
     );
@@ -58,7 +58,7 @@ export class CheckInUseCase {
       throw new MaxNumberOfCheckInsError();
     }
 
-    const checkIn = await this.checkInsRepository.create({
+    const checkIn = await this.checkInsRepository.createCheckIn({
       user_id: userId,
       gym_id: gymId,
     });

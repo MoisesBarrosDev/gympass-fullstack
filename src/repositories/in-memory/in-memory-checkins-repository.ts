@@ -1,13 +1,15 @@
 import { randomUUID } from "node:crypto";
 import type { CheckIn } from "../../generated/prisma/client.js";
-import type { CheckInUncheckedCreateInput } from "../../generated/prisma/models.js";
-import type { CheckInsRepository } from "../check-ins-repository.js";
+import type {
+  CheckInsRepository,
+  CreateCheckInData,
+} from "../check-ins-repository.js";
 import dayjs from "dayjs";
 
 export class InMemoryCheckInsRepository implements CheckInsRepository {
   public items: CheckIn[] = [];
 
-  async findByUserIdOnDate(userId: string, date: Date) {
+  async findCheckInByUserIdOnDate(userId: string, date: Date) {
     const startOfTheDay = dayjs(date).startOf("date");
     const endOfTheDay = dayjs(date).endOf("date");
 
@@ -25,17 +27,17 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
     return checkOnSameDate;
   }
 
-  async findManyByUserId(userId: string, page: number) {
+  async findManyCheckInsByUserId(userId: string, page: number) {
     return this.items
       .filter((item) => item.user_id === userId)
       .slice((page - 1) * 20, page * 20);
   }
 
-  async create(data: CheckInUncheckedCreateInput) {
+  async createCheckIn(data: CreateCheckInData) {
     const checkIn = {
       id: randomUUID(),
       created_at: new Date(),
-      validated_at: data.validated_at ? new Date(data.validated_at) : null,
+      validated_at: null,
       user_id: data.user_id,
       gym_id: data.gym_id,
     };
@@ -45,13 +47,13 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
     return checkIn;
   }
 
-  async countByUserId(userId: string): Promise<number> {
+  async countCheckInsByUserId(userId: string): Promise<number> { //** todo */
     const checkIns = this.items.filter((item) => item.user_id === userId);
 
     return checkIns.length;
   }
 
-  async findById(id: string) {
+  async findCheckInById(id: string) {
     const checkIn = this.items.find((item) => item.id === id);
 
     if (!checkIn) return null;
@@ -59,7 +61,7 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
     return checkIn;
   }
 
-  async save(checkIn: CheckIn): Promise<CheckIn> {
+  async saveCheckIn(checkIn: CheckIn): Promise<CheckIn> {
     const checkInIndex = this.items.findIndex((item) => item.id === checkIn.id);
 
     if (checkInIndex >= 0) {

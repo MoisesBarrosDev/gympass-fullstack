@@ -20,7 +20,7 @@ export class FetchUserCheckInsHistory {
     userId,
     page,
   }: FetchUserCheckInsHistoryRequest): Promise<FetchUserCheckInsHistoryResponse> {
-    const checkIns = await this.checkInsRepository.findManyByUserId(userId, page);
+    const checkIns = await this.checkInsRepository.findManyCheckInsByUserId(userId, page);
 
     return {
       checkIns,

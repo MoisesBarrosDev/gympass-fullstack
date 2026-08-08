@@ -17,13 +17,13 @@ export class DeleteGymUseCase {
   async execute({
     id,
   }: DeleteGymUseCaseRequest): Promise<DeleteGymUseCaseResponse> {
-    const deletedGym = await this.gymsRepository.findDeletedById(id);
+    const deletedGym = await this.gymsRepository.findDeletedGymById(id);
 
     if (deletedGym) {
       throw new GymAlreadyDeletedError();
     }
 
-    const gymRemoved = await this.gymsRepository.deleteById(id);
+    const gymRemoved = await this.gymsRepository.deleteGymById(id);
 
     if (!gymRemoved) {
       throw new ResourceNotFoundError();

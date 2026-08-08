@@ -12,12 +12,12 @@ describe("Fetch User Check-in History Use Case", () => {
   });
 
   test("should be able to fetch check-in history", async () => {
-    await inMemoryCheckInsRepository.create({
+    await inMemoryCheckInsRepository.createCheckIn({
       gym_id: "gym-01",
       user_id: "user-01",
     });
 
-    await inMemoryCheckInsRepository.create({
+    await inMemoryCheckInsRepository.createCheckIn({
       gym_id: "gym-02",
       user_id: "user-01",
     });
@@ -36,7 +36,7 @@ describe("Fetch User Check-in History Use Case", () => {
 
   test("should be able to fetch paginated check-in history", async () => {
     for (let i = 1; i <= 22; i++) {
-      await inMemoryCheckInsRepository.create({
+      await inMemoryCheckInsRepository.createCheckIn({
         gym_id: `gym-${i}`,
         user_id: "user-01",
       });

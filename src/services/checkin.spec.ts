@@ -20,7 +20,7 @@ describe("Check-in Use Case", () => {
       inMemoryGymsRepository,
     );
 
-    await inMemoryGymsRepository.create({
+    await inMemoryGymsRepository.createGym({
       id: "gym-01",
       title: "JavaScript Gym",
       description: "",
@@ -88,7 +88,7 @@ describe("Check-in Use Case", () => {
   });
 
   test("should not be able to check in on distant gym", async () => {
-    await inMemoryGymsRepository.create({
+    await inMemoryGymsRepository.createGym({
       id: "gym-02",
       title: "JavaScript Gym",
       description: "",

@@ -1,11 +1,15 @@
 import type { CheckIn } from "../generated/prisma/client.js";
-import type { CheckInUncheckedCreateInput } from "../generated/prisma/models.js";
+
+export interface CreateCheckInData {
+  user_id: string;
+  gym_id: string;
+}
 
 export interface CheckInsRepository {
-  create(data: CheckInUncheckedCreateInput): Promise<CheckIn>;
-  findByUserIdOnDate(userId: string, date: Date): Promise<CheckIn | null>;
-  findManyByUserId(userId: string, page: number): Promise<CheckIn[]>;
-  findById(id: string): Promise<CheckIn | null>;
-  save(checkIn: CheckIn): Promise<CheckIn>;
-  countByUserId(userId: string): Promise<number>;
+  createCheckIn(data: CreateCheckInData): Promise<CheckIn>;
+  findCheckInByUserIdOnDate(userId: string, date: Date): Promise<CheckIn | null>;
+  findManyCheckInsByUserId(userId: string, page: number): Promise<CheckIn[]>;
+  findCheckInById(id: string): Promise<CheckIn | null>;
+  saveCheckIn(checkIn: CheckIn): Promise<CheckIn>;
+  countCheckInsByUserId(userId: string): Promise<number>;
 }

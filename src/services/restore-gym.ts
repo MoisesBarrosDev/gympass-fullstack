@@ -15,13 +15,13 @@ export class RestoreGymUseCase {
   constructor(private gymsRepository: GymsRepository) {}
 
   async execute({ id }: RestoreGymUseCaseRequest): Promise<RestoreGymUseCaseResponse> {
-    const activeGym = await this.gymsRepository.findById(id);
+    const activeGym = await this.gymsRepository.findGymById(id);
 
     if (activeGym) {
       throw new GymAlreadyRestoredError();
     }
 
-    const gym = await this.gymsRepository.restoreById(id);
+    const gym = await this.gymsRepository.restoreGymById(id);
 
     if (!gym) {
       throw new ResourceNotFoundError();
