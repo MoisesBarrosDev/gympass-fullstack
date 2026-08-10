@@ -42,6 +42,7 @@ model Gym {
   phone       String?
   latitude    Decimal
   longitude   Decimal
+  deleted_at  DateTime?
   checkIns    CheckIn[]
 
   @@map("gyms")
