@@ -18,13 +18,12 @@ export class GetUserProfileUseCase {
     userId,
   }: GetUserProfileUseCaseRequest): Promise<GetUserProfileUseCaseResponse> {
     const normalizedUserId = UserId.create(userId);
-    const user = await this.usersRepository.findById(normalizedUserId.value);
+    const user = await this.usersRepository.findUserById(normalizedUserId.value);
 
     if (!user) {
       throw new ResourceNotFoundError();
     }
 
-    //auth
     return {
       user,
     };

@@ -1,19 +1,19 @@
 import { expect, describe, test } from "vitest";
 import { InMemoryUsersRepository } from "../repositories/in-memory/in-memory-users-repository.js";
-import { Authenticate } from "./authenticate.js";
+import { AuthenticateUseCase } from "./authenticate.js";
 import { hash } from "bcryptjs";
 import { InvalidCredentialsError } from "./errors/invalid-credential-error.js";
 import { beforeEach } from "vitest";
 
 let inMemoryRepository: InMemoryUsersRepository;
-let sut: Authenticate;
+let sut: AuthenticateUseCase;
 describe("Authenticate Use Case", () => {
   beforeEach(() => {
     inMemoryRepository = new InMemoryUsersRepository();
-    sut = new Authenticate(inMemoryRepository);
+    sut = new AuthenticateUseCase(inMemoryRepository);
   });
   test("should be able to authenticate", async () => {
-    await inMemoryRepository.create({
+    await inMemoryRepository.createUser({
       name: "lionel",
       email: "lionel10@gmail.com",
       password_hash: await hash("123456789", 6),
@@ -37,7 +37,7 @@ describe("Authenticate Use Case", () => {
   });
 
   test("should not be able to authenticate with wrong password", async () => {
-    await inMemoryRepository.create({
+    await inMemoryRepository.createUser({
       name: "lionel",
       email: "lionel1@gmail.com",
       password_hash: await hash("123456", 6),

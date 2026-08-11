@@ -14,7 +14,7 @@ describe("Register Use Case", () => {
   });
 
   test("should be able to register", async () => {
-    const { user } = await sut.registerServices({
+    const { user } = await sut.execute({
       name: "Lionel",
       email: "lionel10@gmail.com",
       password: "123456789",
@@ -24,7 +24,7 @@ describe("Register Use Case", () => {
   });
 
   test("should hash user password upon registration", async () => {
-    const { user } = await sut.registerServices({
+    const { user } = await sut.execute({
       name: "Lionel",
       email: "lionel10@gmail.com",
       password: "123456789",
@@ -38,14 +38,14 @@ describe("Register Use Case", () => {
   });
 
   test("should not be able to register with same email twice", async () => {
-    await sut.registerServices({
+    await sut.execute({
       name: "Lionel",
       email: "lionel55@gmail.com",
       password: "123456789",
     });
 
     await expect(() =>
-      sut.registerServices({
+      sut.execute({
         name: "Lionel",
         email: "lionel55@gmail.com",
         password: "123456789",

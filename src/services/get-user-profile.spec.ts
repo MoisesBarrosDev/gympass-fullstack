@@ -14,7 +14,7 @@ describe("Get Use Profile Use Case", () => {
   });
 
   test("should be able to get user profile", async () => {
-    const createdUser = await inMemoryRepository.create({
+    const createdUser = await inMemoryRepository.createUser({
       name: "Francisco",
       email: "franciscounder@gmail.com",
       password_hash: await hash("123456", 6),

@@ -13,7 +13,7 @@ interface AuthenticateUseCaseResponse {
   user: User;
 }
 
-export class Authenticate {
+export class AuthenticateUseCase {
   constructor(private usersRepository: UsersRepository) {}
 
   async execute({
@@ -22,7 +22,7 @@ export class Authenticate {
   }: AuthenticateUseCaseRequest): Promise<AuthenticateUseCaseResponse> {
     const normalizedEmail = Email.create(email);
     const userPassword = Password.create(password);
-    const user = await this.usersRepository.findByEmail(normalizedEmail.value);
+    const user = await this.usersRepository.findUserByEmail(normalizedEmail.value);
 
     if (!user) {
       throw new InvalidCredentialsError();
@@ -34,7 +34,6 @@ export class Authenticate {
       throw new InvalidCredentialsError();
     }
 
-    //auth
     return {
       user,
     };

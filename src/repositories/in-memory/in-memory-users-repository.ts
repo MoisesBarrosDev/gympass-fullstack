@@ -6,16 +6,14 @@ import type { UsersRepository } from "../users-repository.js";
 export class InMemoryUsersRepository implements UsersRepository {
   public items: User[] = [];
 
-    async findById(id: string) {
+  async findUserById(id: string) {
     const user = this.items.find((item) => item.id === id);
 
     if (!user) return null;
 
     return user;
   }
-
-
-  async findByEmail(email: string) {
+  async findUserByEmail(email: string) {
     const user = this.items.find((item) => item.email === email);
 
     if (!user) return null;
@@ -23,7 +21,7 @@ export class InMemoryUsersRepository implements UsersRepository {
     return user;
   }
 
-  async create(data: UserCreateInput) {
+  async createUser(data: UserCreateInput) {
     const user = {
       id: randomUUID(),
       name: data.name,
