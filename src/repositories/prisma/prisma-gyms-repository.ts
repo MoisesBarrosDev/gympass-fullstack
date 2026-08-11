@@ -9,18 +9,19 @@ import type {
 
 export class PrismaGymsRepository implements GymsRepository {
   async createGym(data: GymCreateInput) {
-    const createdGym = await prisma.gym.create({
+    const gym = await prisma.gym.create({
       data,
     });
 
-    return createdGym;
+    return gym;
   }
+
   async findGymById(id: string) {
-    const findGym = await prisma.gym.findFirst({
+    const gym = await prisma.gym.findFirst({
       where: { id, deleted_at: null },
     });
 
-    return findGym;
+    return gym;
   }
 
   async deleteGymById(id: string) {
@@ -41,14 +42,14 @@ export class PrismaGymsRepository implements GymsRepository {
   }
 
   async findDeletedGymById(id: string) {
-    const findDeletedGym = await prisma.gym.findFirst({
+    const deletedGym = await prisma.gym.findFirst({
       where: {
         id,
         deleted_at: { not: null },
       },
     });
 
-    return findDeletedGym;
+    return deletedGym;
   }
 
   async restoreGymById(id: string) {
@@ -56,7 +57,7 @@ export class PrismaGymsRepository implements GymsRepository {
 
     if (!gym) return null;
 
-    const restoreGym = await prisma.gym.update({
+    const restoredGym = await prisma.gym.update({
       where: {
         id,
       },
@@ -65,19 +66,19 @@ export class PrismaGymsRepository implements GymsRepository {
       },
     });
 
-    return restoreGym;
+    return restoredGym;
   }
 
   async findManyGyms() {
-    const findManyGyms = await prisma.gym.findMany({
+    const gyms = await prisma.gym.findMany({
       where: { deleted_at: null },
     });
 
-    return findManyGyms;
+    return gyms;
   }
 
   async searchManyGyms(query: string, page: number) {
-    const searchGyms = await prisma.gym.findMany({
+    const gyms = await prisma.gym.findMany({
       where: {
         title: {
           contains: query,
@@ -90,7 +91,7 @@ export class PrismaGymsRepository implements GymsRepository {
       take: 20,
     });
 
-    return searchGyms;
+    return gyms;
   }
 
   async findManyNearbyGyms({ latitude, longitude }: FindManyNearbyProps) {
