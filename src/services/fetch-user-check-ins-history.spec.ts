@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import { InMemoryCheckInsRepository } from "../repositories/in-memory/in-memory-checkins-repository.js";
-import { FetchUserCheckInsHistory } from "./fetch-user-check-ins-history.js";
+import { FetchUserCheckInsHistoryUseCase } from "./fetch-user-check-ins-history.js";
 
 let inMemoryCheckInsRepository: InMemoryCheckInsRepository;
-let sut: FetchUserCheckInsHistory;
+let sut: FetchUserCheckInsHistoryUseCase;
 
 describe("Fetch User Check-in History Use Case", () => {
   beforeEach(async () => {
     inMemoryCheckInsRepository = new InMemoryCheckInsRepository();
-    sut = new FetchUserCheckInsHistory(inMemoryCheckInsRepository);
+    sut = new FetchUserCheckInsHistoryUseCase(inMemoryCheckInsRepository);
   });
 
   test("should be able to fetch check-in history", async () => {
@@ -32,6 +32,20 @@ describe("Fetch User Check-in History Use Case", () => {
       expect.objectContaining({ gym_id: "gym-01" }),
       expect.objectContaining({ gym_id: "gym-02" }),
     ]);
+  });
+
+  test("should normalize the user id before fetching check-in history", async () => {
+    await inMemoryCheckInsRepository.createCheckIn({
+      gym_id: "gym-01",
+      user_id: "user-01",
+    });
+
+    const { checkIns } = await sut.execute({
+      userId: "  user-01  ",
+      page: 1,
+    });
+
+    expect(checkIns).toHaveLength(1);
   });
 
   test("should be able to fetch paginated check-in history", async () => {

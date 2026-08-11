@@ -5,6 +5,9 @@ import { getDistanceBetweenCoordinates } from "../utils/get-distance-between-coo
 import { MaxDistanceError } from "./errors/max-distance-error.js";
 import { MaxNumberOfCheckInsError } from "./errors/max-number-of-check-ins-error.js";
 import { ResourceNotFoundError } from "./errors/resource-not-found-error.js";
+import { UserId } from "./primitives/user-id.js";
+
+const MAX_DISTANCE_IN_KILOMETERS = 0.1;
 
 interface CheckInUseCaseRequest {
   userId: string;
@@ -29,6 +32,7 @@ export class CheckInUseCase {
     userLatitude,
     userLongitude,
   }: CheckInUseCaseRequest): Promise<CheckInUseCaseResponse> {
+    const normalizedUserId = UserId.create(userId);
     const gym = await this.gymsRepository.findGymById(gymId);
 
     if (!gym) {
@@ -43,14 +47,12 @@ export class CheckInUseCase {
       },
     );
 
-    const MAX_DISTANCE_IN_KILOMETERS = 0.1;
-
     if (distance > MAX_DISTANCE_IN_KILOMETERS) {
       throw new MaxDistanceError();
     }
 
     const checkInOnSameDay = await this.checkInsRepository.findCheckInByUserIdOnDate(
-      userId,
+      normalizedUserId.value,
       new Date(),
     );
 
@@ -59,7 +61,7 @@ export class CheckInUseCase {
     }
 
     const checkIn = await this.checkInsRepository.createCheckIn({
-      user_id: userId,
+      user_id: normalizedUserId.value,
       gym_id: gymId,
     });
 

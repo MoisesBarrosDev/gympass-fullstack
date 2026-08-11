@@ -1,4 +1,5 @@
 import type { CheckInsRepository } from "../repositories/check-ins-repository.js";
+import { UserId } from "./primitives/user-id.js";
 
 interface GetUserCheckInsCountUseCaseRequest {
   userId: string;
@@ -14,7 +15,10 @@ export class GetUserCheckInsCountUseCase {
   async execute({
     userId,
   }: GetUserCheckInsCountUseCaseRequest): Promise<GetUserCheckInsCountUseCaseResponse> {
-    const checkInsCount = await this.checkInsRepository.countCheckInsByUserId(userId);
+    const normalizedUserId = UserId.create(userId);
+    const checkInsCount = await this.checkInsRepository.countCheckInsByUserId(
+      normalizedUserId.value,
+    );
 
     return {
       checkInsCount,

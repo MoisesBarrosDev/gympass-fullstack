@@ -1,6 +1,6 @@
 import { describe, expect, beforeEach, test, vi, afterEach } from "vitest";
 import { InMemoryCheckInsRepository } from "../repositories/in-memory/in-memory-checkins-repository.js";
-import { CheckInUseCase } from "./checkin.js";
+import { CheckInUseCase } from "./check-in.js";
 import { InMemoryGymsRepository } from "../repositories/in-memory/in-memory-gyms-repository.js";
 import { Decimal } from "@prisma/client/runtime/client";
 import { MaxDistanceError } from "./errors/max-distance-error.js";
@@ -46,6 +46,17 @@ describe("Check-in Use Case", () => {
 
     expect(checkIn.user_id).toEqual("user-01");
     expect(checkIn.gym_id).toEqual("gym-01");
+  });
+
+  test("should normalize the user id before checking in", async () => {
+    const { checkIn } = await sut.execute({
+      gymId: "gym-01",
+      userId: "  user-01  ",
+      userLatitude: -22.872064,
+      userLongitude: -43.237376,
+    });
+
+    expect(checkIn.user_id).toBe("user-01");
   });
 
   test("should not be able to check in twice in the same day", async () => {

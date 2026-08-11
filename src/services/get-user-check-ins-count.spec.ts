@@ -35,4 +35,17 @@ describe("Get User Check-ins Count Use Case", () => {
 
     expect(checkInsCount).toBe(0);
   });
+
+  test("should normalize the user id before counting check-ins", async () => {
+    await inMemoryCheckInsRepository.createCheckIn({
+      gym_id: "gym01",
+      user_id: "user01",
+    });
+
+    const { checkInsCount } = await sut.execute({
+      userId: "  user01  ",
+    });
+
+    expect(checkInsCount).toBe(1);
+  });
 });
