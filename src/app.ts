@@ -2,9 +2,11 @@ import fastify from "fastify";
 import { appRoutes } from "./http/routes.js";
 import { ZodError } from "zod";
 import { env } from "./env/index.js";
+import fastifyJwt from "@fastify/jwt";
 
 export const app = fastify();
 
+app.register(fastifyJwt, { secret: env.JWT_SECRET });
 app.register(appRoutes);
 
 app.setErrorHandler((error, _request, reply) => {
@@ -15,8 +17,8 @@ app.setErrorHandler((error, _request, reply) => {
   }
   if (env.NODE_ENV !== "production") {
     console.error(error);
-    // TODO: aqui deveriamos fazer um log para uma ferramenta externa como um DataDog/NewRelic/Sentry, porque 
-    // em produção não fazemos esse console.error Isso são ferramentas de observabilidade. 
-  }    
+    // TODO: aqui deveriamos fazer um log para uma ferramenta externa como um DataDog/NewRelic/Sentry, porque
+    // em produção não fazemos esse console.error Isso são ferramentas de observabilidade.
+  }
   return reply.status(500).send({ message: "Internal server error." });
 });
