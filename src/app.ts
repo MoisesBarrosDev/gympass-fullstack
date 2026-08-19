@@ -1,13 +1,28 @@
 import fastify from "fastify";
-import { appRoutes } from "./http/routes.js";
 import { ZodError } from "zod";
 import { env } from "./env/index.js";
 import fastifyJwt from "@fastify/jwt";
+import fastifyCookie from "@fastify/cookie";
+import { usersRoutes } from "./http/routes/users-routes.js";
+import { gymsRoutes } from "./http/routes/gyms-routes.js";
+import { checkInsRoutes } from "./http/routes/check-ins-routes.js";
 
 export const app = fastify();
 
-app.register(fastifyJwt, { secret: env.JWT_SECRET });
-app.register(appRoutes);
+app.register(fastifyJwt, {
+  secret: env.JWT_SECRET,
+  sign: { expiresIn: "10m" },
+  cookie: {
+    cookieName: "refreshToken",
+    // O JWT já possui sua própria assinatura; o cookie não recebe uma segunda.
+    signed: false,
+  },
+});
+
+app.register(fastifyCookie);
+app.register(usersRoutes);
+app.register(gymsRoutes);
+app.register(checkInsRoutes);
 
 app.setErrorHandler((error, _request, reply) => {
   if (error instanceof ZodError) {
