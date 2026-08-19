@@ -34,5 +34,8 @@ describe("Authenticate controller (E2E)", () => {
     expect(response.json()).toEqual({
       token: expect.any(String),
     });
+    expect(response.headers["set-cookie"]).toEqual(
+      expect.stringContaining("refreshToken="),
+    );
   });
 });

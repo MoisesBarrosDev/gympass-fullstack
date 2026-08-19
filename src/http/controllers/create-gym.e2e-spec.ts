@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { app } from "../../app.js";
-import { prisma } from "../../lib/prisma.js";
+import { createAndAuthenticateUser } from "../middlewares/create-and-authenticate-user.js";
 
 describe("Create Gym (e2e)", () => {
   beforeAll(async () => {
@@ -12,51 +12,7 @@ describe("Create Gym (e2e)", () => {
   });
 
   test("should be able to create a gym", async () => {
-    const response = await app.inject({
-      method: "POST",
-      url: "/users",
-      payload: {
-        name: "John Doe",
-        email: "john.doe@example.com",
-        password: "123456",
-      },
-    });
-
-    expect(response.statusCode).toEqual(201);
-
-    const user = await prisma.user.findUnique({
-      where: {
-        email: "john.doe@example.com",
-      },
-    });
-
-    expect(user).toEqual(
-      expect.objectContaining({
-        name: "John Doe",
-        email: "john.doe@example.com",
-      }),
-    );
-
-    const authResponse = await app.inject({
-      method: "POST",
-      url: "/sessions",
-      payload: {
-        email: "john.doe@example.com",
-        password: "123456",
-      },
-    });
-
-    const { token } = authResponse.json<{ token: string }>();
-
-    const profileResponse = await app.inject({
-      method: "GET",
-      url: "/me",
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    });
-
-    expect(profileResponse.statusCode).toEqual(200);
+    const { token } = await createAndAuthenticateUser(app);
 
     const gym = await app.inject({
       method: "POST",

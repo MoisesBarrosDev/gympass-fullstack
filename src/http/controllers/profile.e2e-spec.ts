@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { app } from "../../app.js";
+import { createAndAuthenticateUser } from "../middlewares/create-and-authenticate-user.js";
 
 describe("Profile controller (E2E)", () => {
   beforeAll(async () => {
@@ -11,26 +12,7 @@ describe("Profile controller (E2E)", () => {
   });
 
   test("should be able to view profile", async () => {
-    await app.inject({
-      method: "POST",
-      url: "/users",
-      payload: {
-        name: "John Doe",
-        email: "john.doe@example.com",
-        password: "123456",
-      },
-    });
-
-    const authResponse = await app.inject({
-      method: "POST",
-      url: "/sessions",
-      payload: {
-        email: "john.doe@example.com",
-        password: "123456",
-      },
-    });
-
-    const { token } = authResponse.json<{ token: string }>();
+    const { token } = await createAndAuthenticateUser(app);
 
     const profileResponse = await app.inject({
       method: "GET",

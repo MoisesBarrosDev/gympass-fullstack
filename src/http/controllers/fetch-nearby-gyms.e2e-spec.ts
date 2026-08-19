@@ -1,8 +1,8 @@
-import { afterAll, beforeAll, describe, test, expect } from "vitest";
+import { describe, test, beforeAll, afterAll, expect } from "vitest";
 import { app } from "../../app.js";
 import { createAndAuthenticateUser } from "../middlewares/create-and-authenticate-user.js";
 
-describe("Fetch Gyms (e2e)", () => {
+describe("Fetch Nearby Gyms (e2e)", () => {
   beforeAll(async () => {
     await app.ready();
   });
@@ -11,16 +11,17 @@ describe("Fetch Gyms (e2e)", () => {
     await app.close();
   });
 
-  test("should be able to fetch gyms", async () => {
+  test("should be able to fetch nearby gyms", async () => {
     const { token } = await createAndAuthenticateUser(app);
 
     const gym = await app.inject({
       method: "GET",
-      url: "/gyms",
+      url: "/gyms/nearby?userLatitude=-23.682160&userLongitude=-46.875788",
       headers: {
         authorization: `Bearer ${token}`,
       },
     });
+
     expect(gym.statusCode).toEqual(200);
   });
 });
