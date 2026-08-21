@@ -7,13 +7,30 @@ import { restoreGym } from "../controllers/restore-gym.js";
 import { searchGyms } from "../controllers/search-gyms.js";
 import { updateGym } from "../controllers/update-gym.js";
 import { verifyJWT } from "../middlewares/verify-jwt.js";
+import { verifyUserRole } from "../middlewares/verify-user-role.js";
 
 export async function gymsRoutes(app: FastifyInstance) {
-  app.post("/gyms", { onRequest: [verifyJWT] }, createGym);
+  app.post(
+    "/gyms",
+    { onRequest: [verifyJWT, verifyUserRole("ADMIN")] },
+    createGym,
+  );
   app.get("/gyms", { onRequest: [verifyJWT] }, fetchGyms);
   app.get("/gyms/search", { onRequest: [verifyJWT] }, searchGyms);
   app.get("/gyms/nearby", { onRequest: [verifyJWT] }, fetchNearbyGyms);
-  app.patch("/gyms/:gymId", { onRequest: [verifyJWT] }, updateGym);
-  app.delete("/gyms/:gymId", { onRequest: [verifyJWT] }, deleteGym);
-  app.patch("/gyms/:gymId/restore", { onRequest: [verifyJWT] }, restoreGym);
+  app.patch(
+    "/gyms/:gymId",
+    { onRequest: [verifyJWT, verifyUserRole("ADMIN")] },
+    updateGym,
+  );
+  app.delete(
+    "/gyms/:gymId",
+    { onRequest: [verifyJWT, verifyUserRole("ADMIN")] },
+    deleteGym,
+  );
+  app.patch(
+    "/gyms/:gymId/restore",
+    { onRequest: [verifyJWT, verifyUserRole("ADMIN")] },
+    restoreGym,
+  );
 }

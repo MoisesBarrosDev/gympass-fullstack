@@ -8,7 +8,7 @@ describe("Update gym controller (E2E)", () => {
   afterAll(async () => app.close());
 
   test("should be able to update a gym", async () => {
-    const { token } = await createAndAuthenticateUser(app);
+    const { token } = await createAndAuthenticateUser(app,{ role: "ADMIN" });
     const gym = await prisma.gym.create({
       data: { title: "Old Gym", latitude: -23.68216, longitude: -46.875788 },
     });

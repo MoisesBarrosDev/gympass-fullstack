@@ -1,17 +1,28 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { randomUUID } from "node:crypto";
 import { env } from "../../env/index.js";
+import { makeRotateRefreshTokenUseCase } from "../../services/factories/make-rotate-refresh-token-use-case.js";
 
 export async function refresh(req: FastifyRequest, reply: FastifyReply) {
   try {
-    await req.jwtVerify({ onlyCookie: true });// ela vai verificar se o token de refresh está presente no cookie e se é válido
+    await req.jwtVerify({ onlyCookie: true });
 
-    if (req.user.type !== "refresh") {
+    if (req.user.type !== "refresh" || !req.user.jti) {
       return reply.status(401).send({ message: "Invalid refresh token." });
     }
 
+    const newRefreshTokenId = randomUUID();
+    const refreshTokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    const { user } = await makeRotateRefreshTokenUseCase().execute({
+      currentTokenId: req.user.jti,
+      newTokenId: newRefreshTokenId,
+      userId: req.user.sub,
+      expiresAt: refreshTokenExpiresAt,
+    });
+
     const token = await reply.jwtSign(
-      { type: "access" },
+      { type: "access", role: user.role },
       {
         sign: {
           sub: req.user.sub,
@@ -21,7 +32,7 @@ export async function refresh(req: FastifyRequest, reply: FastifyReply) {
     );
 
     const refreshToken = await reply.jwtSign(
-      { type: "refresh", jti: randomUUID() },
+      { type: "refresh", jti: newRefreshTokenId, role: user.role },
       {
         sign: {
           sub: req.user.sub,
@@ -32,7 +43,7 @@ export async function refresh(req: FastifyRequest, reply: FastifyReply) {
 
     return reply
       .setCookie("refreshToken", refreshToken, {
-        path: "/sessions/refresh",
+        path: "/sessions",
         secure: env.NODE_ENV === "production",
         sameSite: "strict",
         httpOnly: true,

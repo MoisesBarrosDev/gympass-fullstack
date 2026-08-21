@@ -9,7 +9,7 @@ describe("Validate check-in controller (E2E)", () => {
 
   test("should be able to validate a check-in", async () => {
     const email = "validation@example.com";
-    const { token } = await createAndAuthenticateUser(app, { email });
+    const { token } = await createAndAuthenticateUser(app, { email, role: "ADMIN" });
     const user = await prisma.user.findUniqueOrThrow({ where: { email } });
     const gym = await prisma.gym.create({
       data: { title: "Validation Gym", latitude: -23.68216, longitude: -46.875788 },

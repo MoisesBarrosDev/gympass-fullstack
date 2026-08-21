@@ -4,6 +4,7 @@ import { fetchUserCheckInsHistory } from "../controllers/fetch-user-check-ins-hi
 import { getUserCheckInsCount } from "../controllers/get-user-check-ins-count.js";
 import { validateCheckIn } from "../controllers/validate-check-in.js";
 import { verifyJWT } from "../middlewares/verify-jwt.js";
+import { verifyUserRole } from "../middlewares/verify-user-role.js";
 
 export async function checkInsRoutes(app: FastifyInstance) {
   app.post("/gyms/:gymId/check-ins", { onRequest: [verifyJWT] }, checkIn);
@@ -19,7 +20,7 @@ export async function checkInsRoutes(app: FastifyInstance) {
   );
   app.patch(
     "/check-ins/:checkInId/validate",
-    { onRequest: [verifyJWT] },
+    { onRequest: [verifyJWT, verifyUserRole("ADMIN")] },
     validateCheckIn,
   );
 }

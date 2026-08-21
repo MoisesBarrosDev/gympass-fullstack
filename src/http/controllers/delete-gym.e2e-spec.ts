@@ -8,7 +8,7 @@ describe("Delete gym controller (E2E)", () => {
   afterAll(async () => app.close());
 
   test("should be able to delete a gym", async () => {
-    const { token } = await createAndAuthenticateUser(app);
+    const { token } = await createAndAuthenticateUser(app,{ role: "ADMIN" });
     const gym = await prisma.gym.create({
       data: { title: "Gym to delete", latitude: -23.68216, longitude: -46.875788 },
     });

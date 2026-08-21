@@ -12,7 +12,7 @@ describe("Create Gym (e2e)", () => {
   });
 
   test("should be able to create a gym", async () => {
-    const { token } = await createAndAuthenticateUser(app);
+    const { token } = await createAndAuthenticateUser(app, { role: "ADMIN" });
 
     const gym = await app.inject({
       method: "POST",

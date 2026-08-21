@@ -4,6 +4,7 @@ import { z } from "zod";
 import { env } from "../../env/index.js";
 import { InvalidCredentialsError } from "../../services/errors/invalid-credential-error.js";
 import { makeAuthenticateUseCase } from "../../services/factories/make-authenticate-use-case.js";
+import { makeCreateRefreshTokenUseCase } from "../../services/factories/make-create-refresh-token-use-case.js";
 
 export async function authenticate(req: FastifyRequest, reply: FastifyReply) {
   const authenticateBodySchema = z.object({
@@ -19,7 +20,7 @@ export async function authenticate(req: FastifyRequest, reply: FastifyReply) {
     const { user } = await authenticateUseCase.execute({ email, password });
 
     const token = await reply.jwtSign(
-      { type: "access" },
+      { type: "access", role: user.role },
       {
         sign: {
           sub: user.id,
@@ -28,8 +29,17 @@ export async function authenticate(req: FastifyRequest, reply: FastifyReply) {
       },
     );
 
+    const refreshTokenId = randomUUID();
+    const refreshTokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    await makeCreateRefreshTokenUseCase().execute({
+      id: refreshTokenId,
+      userId: user.id,
+      expiresAt: refreshTokenExpiresAt,
+    });
+
     const refreshToken = await reply.jwtSign(
-      { type: "refresh", jti: randomUUID() },
+      { type: "refresh", jti: refreshTokenId, role: user.role },
       {
         sign: {
           sub: user.id,
@@ -40,7 +50,7 @@ export async function authenticate(req: FastifyRequest, reply: FastifyReply) {
 
     return reply
       .setCookie("refreshToken", refreshToken, {
-        path: "/sessions/refresh",
+        path: "/sessions",
         secure: env.NODE_ENV === "production",
         sameSite: "strict",
         httpOnly: true,

@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { app } from "../../app.js";
+import { prisma } from "../../lib/prisma.js";
 
 describe("Authenticate controller (E2E)", () => {
   beforeAll(async () => {
@@ -36,6 +37,19 @@ describe("Authenticate controller (E2E)", () => {
     });
     expect(response.headers["set-cookie"]).toEqual(
       expect.stringContaining("refreshToken="),
+    );
+
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { email: "john.doe@example.com" },
+      include: { refreshTokens: true },
+    });
+
+    expect(user.refreshTokens).toHaveLength(1);
+    expect(user.refreshTokens[0]).toEqual(
+      expect.objectContaining({
+        revoked_at: null,
+        expires_at: expect.any(Date),
+      }),
     );
   });
 });

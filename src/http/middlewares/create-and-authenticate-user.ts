@@ -1,9 +1,11 @@
 import type { FastifyInstance } from "fastify";
+import { prisma } from "../../lib/prisma.js";
 
 interface CreateAndAuthenticateUserOptions {
   name?: string;
   email?: string;
   password?: string;
+  role?: "ADMIN" | "MEMBER";
 }
 
 export async function createAndAuthenticateUser(
@@ -19,6 +21,13 @@ export async function createAndAuthenticateUser(
     url: "/users",
     payload: { name, email, password },
   });
+
+  if (options.role) {
+    await prisma.user.update({
+      where: { email },
+      data: { role: options.role },
+    });
+  }
 
   const authResponse = await app.inject({
     method: "POST",
