@@ -41,13 +41,17 @@ describe("Fetch Gyms Use Case", () => {
       longitude: -43.237316,
     });
 
-    const { gyms } = await sut.execute();
+    const { gyms } = await sut.execute({
+      page: 1,
+    });
 
     expect(gyms).toHaveLength(4);
   });
 
   test("should return an empty list when there are no active gyms", async () => {
-    const { gyms } = await sut.execute();
+    const { gyms } = await sut.execute({
+      page: 1,
+    });
 
     expect(gyms).toHaveLength(0);
   });

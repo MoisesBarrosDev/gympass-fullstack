@@ -13,6 +13,7 @@ export interface UpdateGymData {
 export interface FindManyNearbyProps {
   latitude: number;
   longitude: number;
+  page: number;
 }
 
 export interface GymsRepository {
@@ -21,7 +22,7 @@ export interface GymsRepository {
   createGym(data: GymCreateInput): Promise<Gym>;
   deleteGymById(id: string): Promise<Gym | null>;
   restoreGymById(id: string): Promise<Gym | null>;
-  findManyGyms(): Promise<Gym[]>;
+  findManyGyms(page: number): Promise<Gym[]>;
   searchManyGyms(query: string, page: number): Promise<Gym[]>;
   updateGym(data: UpdateGymData): Promise<Gym | null>;
   findManyNearbyGyms(params: FindManyNearbyProps): Promise<Gym[]>;

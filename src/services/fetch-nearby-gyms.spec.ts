@@ -26,6 +26,7 @@ describe("Fetch Nearby Gyms Use Case", () => {
     const { gyms } = await sut.execute({
       userLatitude: -22.332064,
       userLongitude: -21.217064,
+      page: 1,
     });
 
     expect(gyms).toHaveLength(1);

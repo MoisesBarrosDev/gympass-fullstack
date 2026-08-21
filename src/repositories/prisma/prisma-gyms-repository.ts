@@ -69,9 +69,11 @@ export class PrismaGymsRepository implements GymsRepository {
     return restoredGym;
   }
 
-  async findManyGyms() {
+  async findManyGyms(page: number) {
     const gyms = await prisma.gym.findMany({
       where: { deleted_at: null },
+      skip: (page - 1) * 20,
+      take: 20,
     });
 
     return gyms;
@@ -94,20 +96,45 @@ export class PrismaGymsRepository implements GymsRepository {
     return gyms;
   }
 
-  async findManyNearbyGyms({ latitude, longitude }: FindManyNearbyProps) {
+  async findManyNearbyGyms({ latitude, longitude, page }: FindManyNearbyProps) {
+    const itemsPerPage = 20;
+    const offset = (page - 1) * itemsPerPage;
+
     const gyms = await prisma.$queryRaw<Gym[]>`
-      SELECT *
-      FROM gyms
-      WHERE deleted_at IS NULL
-      AND (
-        6371 * ACOS(
-          COS(RADIANS(${latitude}))
-          * COS(RADIANS(latitude))
-          * COS(RADIANS(longitude) - RADIANS(${longitude}))
-          + SIN(RADIANS(${latitude}))
-          * SIN(RADIANS(latitude))
-        )
-      ) <= 10
+      WITH nearby_gyms AS (
+        SELECT
+          id,
+          title,
+          description,
+          phone,
+          latitude,
+          longitude,
+          deleted_at,
+          (
+            6371 * ACOS(
+              COS(RADIANS(${latitude}))
+              * COS(RADIANS(latitude))
+              * COS(RADIANS(longitude) - RADIANS(${longitude}))
+              + SIN(RADIANS(${latitude}))
+              * SIN(RADIANS(latitude))
+            )
+          ) AS distance
+        FROM gyms
+        WHERE deleted_at IS NULL
+      )
+      SELECT
+        id,
+        title,
+        description,
+        phone,
+        latitude,
+        longitude,
+        deleted_at
+      FROM nearby_gyms
+      WHERE distance <= 10
+      ORDER BY distance ASC, id ASC
+      LIMIT ${itemsPerPage}
+      OFFSET ${offset}
     `;
 
     return gyms;

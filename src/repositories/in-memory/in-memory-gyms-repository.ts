@@ -100,22 +100,40 @@ export class InMemoryGymsRepository implements GymsRepository {
     return gym;
   }
 
-  async findManyGyms(): Promise<Gym[]> {
-    return this.items;
+  async findManyGyms(page: number): Promise<Gym[]> {
+    return this.items.slice((page - 1) * 20, page * 20);
   }
 
   async findManyNearbyGyms(params: FindManyNearbyProps): Promise<Gym[]> {
-    return this.items.filter((item) => {
-      const distance = getDistanceBetweenCoordinates(
-        { latitude: params.latitude, longitude: params.longitude },
-        {
-          latitude: item.latitude.toNumber(),
-          longitude: item.longitude.toNumber(),
-        },
-      );
+    const itemsPerPage = 20;
+    const offset = (params.page - 1) * itemsPerPage;
 
-      return distance <= 10;
-    });
+    return this.items
+      .map((gym) => {
+        const distance = getDistanceBetweenCoordinates(
+          {
+            latitude: params.latitude,
+            longitude: params.longitude,
+          },
+          {
+            latitude: gym.latitude.toNumber(),
+            longitude: gym.longitude.toNumber(),
+          },
+        );
+
+        return {
+          gym,
+          distance,
+        };
+      })
+      .filter(({ distance }) => distance <= 10)
+      .sort(
+        (first, second) =>
+          first.distance - second.distance ||
+          first.gym.id.localeCompare(second.gym.id),
+      )
+      .slice(offset, offset + itemsPerPage)
+      .map(({ gym }) => gym);
   }
 
   async searchManyGyms(query: string, page: number): Promise<Gym[]> {
