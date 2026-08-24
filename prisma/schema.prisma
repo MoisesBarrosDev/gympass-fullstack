@@ -31,7 +31,7 @@ model CheckIn {
   validated_at DateTime?
   user         User      @relation(fields: [user_id], references: [id])
   user_id      String
-  gym          Gym       @relation(fields: [gym_id], references: [id])
+  gym          Gym       @relation(fields: [gym_id], references: [id], onDelete: Cascade)
   gym_id       String
 
   @@map("check-ins")

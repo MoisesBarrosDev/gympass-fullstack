@@ -92,6 +92,25 @@ export class InMemoryGymsRepository implements GymsRepository {
     return gym;
   }
 
+  async permanentlyDeleteGymById(id: string): Promise<Gym | null> {
+    const gymIndex = this.deletedGyms.findIndex((item) => item.id === id);
+    const gym = this.deletedGyms[gymIndex];
+
+    if (!gym) return null;
+
+    this.deletedGyms.splice(gymIndex, 1);
+
+    return gym;
+  }
+
+  async permanentlyDeleteAllGyms(): Promise<number> {
+    const count = this.deletedGyms.length;
+
+    this.deletedGyms = [];
+
+    return count;
+  }
+
   async findDeletedGymById(id: string) {
     const gym = this.deletedGyms.find((item) => item.id === id);
 
@@ -102,6 +121,10 @@ export class InMemoryGymsRepository implements GymsRepository {
 
   async findManyGyms(page: number): Promise<Gym[]> {
     return this.items.slice((page - 1) * 20, page * 20);
+  }
+
+  async findManyDeletedGyms(page: number): Promise<Gym[]> {
+    return this.deletedGyms.slice((page - 1) * 20, page * 20);
   }
 
   async findManyNearbyGyms(params: FindManyNearbyProps): Promise<Gym[]> {

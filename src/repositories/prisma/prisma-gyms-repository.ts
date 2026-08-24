@@ -69,6 +69,22 @@ export class PrismaGymsRepository implements GymsRepository {
     return restoredGym;
   }
 
+  async permanentlyDeleteGymById(id: string) {
+    const gym = await this.findDeletedGymById(id);
+
+    if (!gym) return null;
+
+    return prisma.gym.delete({ where: { id } });
+  }
+
+  async permanentlyDeleteAllGyms() {
+    const { count } = await prisma.gym.deleteMany({
+      where: { deleted_at: { not: null } },
+    });
+
+    return count;
+  }
+
   async findManyGyms(page: number) {
     const gyms = await prisma.gym.findMany({
       where: { deleted_at: null },
@@ -77,6 +93,19 @@ export class PrismaGymsRepository implements GymsRepository {
     });
 
     return gyms;
+  }
+
+  async findManyDeletedGyms(page: number) {
+    return prisma.gym.findMany({
+      where: {
+        deleted_at: { not: null },
+      },
+      orderBy: {
+        deleted_at: "desc",
+      },
+      skip: (page - 1) * 20,
+      take: 20,
+    });
   }
 
   async searchManyGyms(query: string, page: number) {
