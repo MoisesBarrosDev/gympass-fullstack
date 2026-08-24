@@ -33,7 +33,7 @@ describe("Search Gyms (e2e)", () => {
 
     const searchGymsResponse = await app.inject({
       method: "GET",
-      url: "/gyms/search?query=JavaScript&page=1",
+      url: "/gyms/search?query=J&page=1",
       headers: {
         authorization: `Bearer ${token}`,
       },

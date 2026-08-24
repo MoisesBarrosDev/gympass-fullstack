@@ -137,8 +137,12 @@ export class InMemoryGymsRepository implements GymsRepository {
   }
 
   async searchManyGyms(query: string, page: number): Promise<Gym[]> {
+    const normalizedQuery = query.toLocaleLowerCase();
+
     return this.items
-      .filter((item) => item.title.includes(query))
+      .filter((item) =>
+        item.title.toLocaleLowerCase().startsWith(normalizedQuery),
+      )
       .slice((page - 1) * 20, page * 20);
   }
 }

@@ -24,7 +24,7 @@ describe("Search Gyms Use Case", () => {
     });
 
     const { gyms } = await sut.execute({
-      query: "JavaScript Gym",
+      query: "java",
       page: 1,
     });
 
@@ -39,6 +39,18 @@ describe("Search Gyms Use Case", () => {
       query: "non-existent gym",
       page: 1,
     });
+
+    expect(gyms).toHaveLength(0);
+  });
+
+  test("should only return gyms whose names start with the query", async () => {
+    await inMemoryGymsRepository.createGym({
+      title: "JavaScript Gym",
+      latitude: -22.872064,
+      longitude: -21.572064,
+    });
+
+    const { gyms } = await sut.execute({ query: "Script", page: 1 });
 
     expect(gyms).toHaveLength(0);
   });

@@ -83,7 +83,7 @@ export class PrismaGymsRepository implements GymsRepository {
     const gyms = await prisma.gym.findMany({
       where: {
         title: {
-          contains: query,
+          startsWith: query,
           mode: "insensitive",
         },
         deleted_at: null,
