@@ -26,7 +26,7 @@ export async function refresh(req: FastifyRequest, reply: FastifyReply) {
       {
         sign: {
           sub: req.user.sub,
-          expiresIn: "10m",
+          expiresIn: "1d",
         },
       },
     );
