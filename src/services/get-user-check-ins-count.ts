@@ -16,9 +16,10 @@ export class GetUserCheckInsCountUseCase {
     userId,
   }: GetUserCheckInsCountUseCaseRequest): Promise<GetUserCheckInsCountUseCaseResponse> {
     const normalizedUserId = UserId.create(userId);
-    const checkInsCount = await this.checkInsRepository.countCheckInsByUserId(
-      normalizedUserId.value,
-    );
+    const checkInsCount =
+      await this.checkInsRepository.countValidatedCheckInsByUserId(
+        normalizedUserId.value,
+      );
 
     return {
       checkInsCount,

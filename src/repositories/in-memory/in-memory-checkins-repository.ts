@@ -33,8 +33,53 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
       .slice((page - 1) * 20, page * 20);
   }
 
+  async findManyPendingCheckIns(page: number, createdAfter: Date) {
+    return this.items
+      .filter(
+        (item) =>
+          item.validated_at === null && item.created_at >= createdAfter,
+      )
+      .sort((first, second) => second.created_at.getTime() - first.created_at.getTime())
+      .slice((page - 1) * 20, page * 20)
+      .map((item) => ({
+        ...item,
+        user: { name: item.user_id, email: "" },
+        gym: { title: item.gym_id },
+      }));
+  }
+
+  async findManyExpiredCheckIns(page: number, createdBefore: Date) {
+    return this.items
+      .filter(
+        (item) =>
+          item.validated_at === null && item.created_at < createdBefore,
+      )
+      .sort((first, second) => second.created_at.getTime() - first.created_at.getTime())
+      .slice((page - 1) * 20, page * 20)
+      .map((item) => ({
+        ...item,
+        user: { name: item.user_id, email: "" },
+        gym: { title: item.gym_id },
+      }));
+  }
+
+  async findManyValidatedCheckIns(page: number) {
+    return this.items
+      .filter((item) => item.validated_at !== null)
+      .sort(
+        (first, second) =>
+          second.validated_at!.getTime() - first.validated_at!.getTime(),
+      )
+      .slice((page - 1) * 20, page * 20)
+      .map((item) => ({
+        ...item,
+        user: { name: item.user_id, email: "" },
+        gym: { title: item.gym_id },
+      }));
+  }
+
   async createCheckIn(data: CreateCheckInData) {
-    const checkIn = {
+    const checkIn: CheckIn = {
       id: randomUUID(),
       created_at: new Date(),
       validated_at: null,
@@ -47,8 +92,10 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
     return checkIn;
   }
 
-  async countCheckInsByUserId(userId: string): Promise<number> {
-    const checkIns = this.items.filter((item) => item.user_id === userId);
+  async countValidatedCheckInsByUserId(userId: string): Promise<number> {
+    const checkIns = this.items.filter(
+      (item) => item.user_id === userId && item.validated_at !== null,
+    );
 
     return checkIns.length;
   }
@@ -61,6 +108,17 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
     return checkIn;
   }
 
+  async deleteCheckInById(id: string) {
+    const checkInIndex = this.items.findIndex((item) => item.id === id);
+    const checkIn = this.items[checkInIndex];
+
+    if (!checkIn) return null;
+
+    this.items.splice(checkInIndex, 1);
+
+    return checkIn;
+  }
+
   async saveCheckIn(checkIn: CheckIn): Promise<CheckIn> {
     const checkInIndex = this.items.findIndex((item) => item.id === checkIn.id);
 
@@ -69,5 +127,9 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
     }
 
     return checkIn;
+  }
+
+  async countAllValidatedCheckIns(): Promise<number> {
+    return this.items.filter((item) => item.validated_at !== null).length;
   }
 }

@@ -11,15 +11,19 @@ describe("Get User Check-ins Count Use Case", () => {
     sut = new GetUserCheckInsCountUseCase(inMemoryCheckInsRepository);
   });
 
-  test("should return the total number of check-ins made by a user", async () => {
-    await inMemoryCheckInsRepository.createCheckIn({
+  test("should return the total number of validated check-ins made by a user", async () => {
+    const firstCheckIn = await inMemoryCheckInsRepository.createCheckIn({
       gym_id: "gym01",
       user_id: "user01",
     });
-    await inMemoryCheckInsRepository.createCheckIn({
+    firstCheckIn.validated_at = new Date();
+    await inMemoryCheckInsRepository.saveCheckIn(firstCheckIn);
+    const secondCheckIn = await inMemoryCheckInsRepository.createCheckIn({
       gym_id: "gym02",
       user_id: "user01",
     });
+    secondCheckIn.validated_at = new Date();
+    await inMemoryCheckInsRepository.saveCheckIn(secondCheckIn);
 
     const { checkInsCount } = await sut.execute({
       userId: "user01",
@@ -37,15 +41,28 @@ describe("Get User Check-ins Count Use Case", () => {
   });
 
   test("should normalize the user id before counting check-ins", async () => {
-    await inMemoryCheckInsRepository.createCheckIn({
+    const checkIn = await inMemoryCheckInsRepository.createCheckIn({
       gym_id: "gym01",
       user_id: "user01",
     });
+    checkIn.validated_at = new Date();
+    await inMemoryCheckInsRepository.saveCheckIn(checkIn);
 
     const { checkInsCount } = await sut.execute({
       userId: "  user01  ",
     });
 
     expect(checkInsCount).toBe(1);
+  });
+
+  test("should not count pending check-ins", async () => {
+    await inMemoryCheckInsRepository.createCheckIn({
+      gym_id: "gym01",
+      user_id: "user01",
+    });
+
+    const { checkInsCount } = await sut.execute({ userId: "user01" });
+
+    expect(checkInsCount).toBe(0);
   });
 });

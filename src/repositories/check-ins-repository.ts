@@ -5,11 +5,32 @@ export interface CreateCheckInData {
   gym_id: string;
 }
 
+export interface CheckInWithDetails extends CheckIn {
+  user: {
+    name: string;
+    email: string;
+  };
+  gym: {
+    title: string;
+  };
+}
+
 export interface CheckInsRepository {
   createCheckIn(data: CreateCheckInData): Promise<CheckIn>;
   findCheckInByUserIdOnDate(userId: string, date: Date): Promise<CheckIn | null>;
   findManyCheckInsByUserId(userId: string, page: number): Promise<CheckIn[]>;
+  findManyPendingCheckIns(
+    page: number,
+    createdAfter: Date,
+  ): Promise<CheckInWithDetails[]>;
+  findManyExpiredCheckIns(
+    page: number,
+    createdBefore: Date,
+  ): Promise<CheckInWithDetails[]>;
+  findManyValidatedCheckIns(page: number): Promise<CheckInWithDetails[]>;
   findCheckInById(id: string): Promise<CheckIn | null>;
+  deleteCheckInById(id: string): Promise<CheckIn | null>;
   saveCheckIn(checkIn: CheckIn): Promise<CheckIn>;
-  countCheckInsByUserId(userId: string): Promise<number>;
+  countValidatedCheckInsByUserId(userId: string): Promise<number>;
+  countAllValidatedCheckIns(): Promise<number>;
 }

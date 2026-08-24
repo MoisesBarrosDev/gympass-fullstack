@@ -46,6 +46,9 @@ export class PrismaCheckInsRepository implements CheckInsRepository {
       where: {
         user_id: userId,
       },
+      include: {
+        gym: { select: { title: true } },
+      },
       orderBy: {
         created_at: "desc",
       },
@@ -54,6 +57,67 @@ export class PrismaCheckInsRepository implements CheckInsRepository {
     });
 
     return userCheckIns;
+  }
+
+  async findManyPendingCheckIns(page: number, createdAfter: Date) {
+    return prisma.checkIn.findMany({
+      where: {
+        validated_at: null,
+        created_at: { gte: createdAfter },
+      },
+      include: {
+        user: { select: { name: true, email: true } },
+        gym: { select: { title: true } },
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+      skip: (page - 1) * 20,
+      take: 20,
+    });
+  }
+
+  async findManyExpiredCheckIns(page: number, createdBefore: Date) {
+    return prisma.checkIn.findMany({
+      where: {
+        validated_at: null,
+        created_at: { lt: createdBefore },
+      },
+      include: {
+        user: { select: { name: true, email: true } },
+        gym: { select: { title: true } },
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+      skip: (page - 1) * 20,
+      take: 20,
+    });
+  }
+
+  async findManyValidatedCheckIns(page: number) {
+    return prisma.checkIn.findMany({
+      where: {
+        validated_at: { not: null },
+      },
+      include: {
+        user: { select: { name: true, email: true } },
+        gym: { select: { title: true } },
+      },
+      orderBy: {
+        validated_at: "desc",
+      },
+      skip: (page - 1) * 20,
+      take: 20,
+    });
+  }
+
+  async deleteCheckInById(id: string) {
+    const checkIn = await this.findCheckInById(id);
+
+    if (!checkIn) return null;
+
+    return prisma.checkIn.delete({ where: { id } });
   }
 
   async saveCheckIn(checkIn: CheckIn) {
@@ -69,13 +133,20 @@ export class PrismaCheckInsRepository implements CheckInsRepository {
     return updatedCheckIn;
   }
 
-  async countCheckInsByUserId(userId: string) {
+  async countValidatedCheckInsByUserId(userId: string) {
     const userCheckInsCount = await prisma.checkIn.count({
       where: {
         user_id: userId,
+        validated_at: { not: null },
       },
     });
 
     return userCheckInsCount;
+  }
+
+  async countAllValidatedCheckIns() {
+    return prisma.checkIn.count({
+      where: { validated_at: { not: null } },
+    });
   }
 }

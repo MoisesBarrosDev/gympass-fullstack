@@ -16,7 +16,7 @@ describe("Get user check-ins count controller (E2E)", () => {
     });
     await prisma.checkIn.createMany({
       data: [
-        { user_id: user.id, gym_id: gym.id },
+        { user_id: user.id, gym_id: gym.id, validated_at: new Date() },
         { user_id: user.id, gym_id: gym.id },
       ],
     });
@@ -28,6 +28,6 @@ describe("Get user check-ins count controller (E2E)", () => {
     });
 
     expect(response.statusCode).toBe(200);
-    expect(response.json()).toEqual({ checkInsCount: 2 });
+    expect(response.json()).toEqual({ checkInsCount: 1 });
   });
 });
