@@ -1,5 +1,5 @@
 export class LateCheckInValidationError extends Error {
   constructor() {
-    super("The check-in can only be validated within 20 minutes of its creation.");
+    super("O check-in só pode ser validado em até 20 minutos após sua criação.");
   }
 }
