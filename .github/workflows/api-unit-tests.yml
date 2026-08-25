@@ -7,6 +7,15 @@ jobs:
     name: Run unit tests
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: apps/api
+
+    env:
+      NODE_ENV: test
+      JWT_SECRET: testing
+      DATABASE_URL: postgresql://docker:docker@localhost:5432/apisolid?schema=public
+
     steps:
       - uses: actions/checkout@v4
 
@@ -14,6 +23,8 @@ jobs:
         with:
           node-version: '20.19'
           cache: npm
+          cache-dependency-path: apps/api/package-lock.json
 
       - run: npm ci
+      - run: npx prisma generate
       - run: npm test
