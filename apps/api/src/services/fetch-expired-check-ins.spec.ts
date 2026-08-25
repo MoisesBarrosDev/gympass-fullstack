@@ -29,9 +29,10 @@ describe("Fetch Expired Check-ins Use Case", () => {
     });
     vi.setSystemTime(new Date(2026, 7, 22, 16, 30));
 
-    const { checkIns } = await sut.execute({ page: 1 });
+    const { checkIns, total } = await sut.execute({ page: 1 });
 
     expect(checkIns).toHaveLength(1);
+    expect(total).toBe(1);
     expect(checkIns[0]).toEqual(
       expect.objectContaining({ user_id: "user-01", gym_id: "gym-01" }),
     );

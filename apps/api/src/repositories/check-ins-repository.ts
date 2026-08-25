@@ -32,5 +32,8 @@ export interface CheckInsRepository {
   deleteCheckInById(id: string): Promise<CheckIn | null>;
   saveCheckIn(checkIn: CheckIn): Promise<CheckIn>;
   countValidatedCheckInsByUserId(userId: string): Promise<number>;
+  countCheckInsByUserId(userId: string): Promise<number>;
+  countPendingCheckIns(createdAfter: Date): Promise<number>;
+  countExpiredCheckIns(createdBefore: Date): Promise<number>;
   countAllValidatedCheckIns(): Promise<number>;
 }

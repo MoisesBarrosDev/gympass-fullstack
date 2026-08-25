@@ -13,6 +13,7 @@ interface FetchUserCheckInsHistoryResponse {
   checkIns: Array<
     CheckIn & { status: "VALIDATED" | "PENDING" | "EXPIRED" }
   >;
+  total: number;
 }
 
 export class FetchUserCheckInsHistoryUseCase {
@@ -23,10 +24,13 @@ export class FetchUserCheckInsHistoryUseCase {
     page,
   }: FetchUserCheckInsHistoryRequest): Promise<FetchUserCheckInsHistoryResponse> {
     const normalizedUserId = UserId.create(userId);
-    const checkIns = await this.checkInsRepository.findManyCheckInsByUserId(
-      normalizedUserId.value,
-      page,
-    );
+    const [checkIns, total] = await Promise.all([
+      this.checkInsRepository.findManyCheckInsByUserId(
+        normalizedUserId.value,
+        page,
+      ),
+      this.checkInsRepository.countCheckInsByUserId(normalizedUserId.value),
+    ]);
 
     return {
       checkIns: checkIns.map((checkIn) => {
@@ -46,6 +50,7 @@ export class FetchUserCheckInsHistoryUseCase {
 
         return { ...checkIn, status };
       }),
+      total,
     };
   }
 }

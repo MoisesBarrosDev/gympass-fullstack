@@ -23,9 +23,10 @@ describe("Fetch Pending Check-ins Use Case", () => {
       gym_id: "gym-01",
     });
 
-    const { checkIns } = await sut.execute({ page: 1 });
+    const { checkIns, total } = await sut.execute({ page: 1 });
 
     expect(checkIns).toHaveLength(1);
+    expect(total).toBe(1);
     expect(checkIns[0]).toEqual(
       expect.objectContaining({ user_id: "user-01", gym_id: "gym-01" }),
     );

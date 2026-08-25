@@ -11,7 +11,6 @@ export const prisma = new PrismaClient({
   adapter: new PrismaPg(
     {
       connectionString: env.DATABASE_URL,
-      options: `-c search_path="${schema}"`,
     },
     {
       schema,

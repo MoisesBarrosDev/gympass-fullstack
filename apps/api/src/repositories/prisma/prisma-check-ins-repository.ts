@@ -144,6 +144,22 @@ export class PrismaCheckInsRepository implements CheckInsRepository {
     return userCheckInsCount;
   }
 
+  async countCheckInsByUserId(userId: string) {
+    return prisma.checkIn.count({ where: { user_id: userId } });
+  }
+
+  async countPendingCheckIns(createdAfter: Date) {
+    return prisma.checkIn.count({
+      where: { validated_at: null, created_at: { gte: createdAfter } },
+    });
+  }
+
+  async countExpiredCheckIns(createdBefore: Date) {
+    return prisma.checkIn.count({
+      where: { validated_at: null, created_at: { lt: createdBefore } },
+    });
+  }
+
   async countAllValidatedCheckIns() {
     return prisma.checkIn.count({
       where: { validated_at: { not: null } },

@@ -21,8 +21,9 @@ describe("Fetch Deleted Gyms Use Case", () => {
     });
     await gymsRepository.deleteGymById(gym.id);
 
-    const { gyms } = await sut.execute({ page: 1 });
+    const { gyms, total } = await sut.execute({ page: 1 });
 
     expect(gyms).toEqual([gym]);
+    expect(total).toBe(1);
   });
 });

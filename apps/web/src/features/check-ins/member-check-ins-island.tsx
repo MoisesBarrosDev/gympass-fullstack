@@ -16,6 +16,7 @@ import type { CheckIn } from "@/lib/domain";
 
 export function MemberCheckInsIsland() {
   const [checks, setChecks] = useState<CheckIn[]>([]);
+  const [total, setTotal] = useState(0);
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(1);
   const { toast, notify } = useToast();
@@ -24,12 +25,13 @@ export function MemberCheckInsIsland() {
     async (requestedPage = 1) => {
       try {
         const [history, metrics] = await Promise.all([
-          api<{ checkIns: CheckIn[] }>(
+          api<{ checkIns: CheckIn[]; total: number }>(
             `/check-ins/history?page=${requestedPage}`,
           ),
           api<{ checkInsCount: number }>("/check-ins/metrics"),
         ]);
         setChecks(history.checkIns);
+        setTotal(history.total);
         setCount(metrics.checkInsCount);
         setPage(requestedPage);
       } catch (cause) {
@@ -64,7 +66,7 @@ export function MemberCheckInsIsland() {
       <section className="panel">
         <Section
           title="Atividade recente"
-          meta={`${checks.length} registros nesta página`}
+          meta={`${checks.length} nesta página · ${total} no total`}
         />
         {checks.length === 0 ? (
           <Empty text="Seu primeiro treino começa agora." />

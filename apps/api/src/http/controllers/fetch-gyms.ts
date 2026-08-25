@@ -11,9 +11,9 @@ export async function fetchGyms(req: FastifyRequest, reply: FastifyReply) {
 
   const fetchGymsUseCase = makeFetchGymsUseCase();
 
-  const { gyms } = await fetchGymsUseCase.execute({
+  const { gyms, total } = await fetchGymsUseCase.execute({
     page,
   });
 
-  return reply.status(200).send({ gyms });
+  return reply.status(200).send({ gyms, total });
 }

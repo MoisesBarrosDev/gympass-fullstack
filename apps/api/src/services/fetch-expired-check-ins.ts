@@ -11,6 +11,7 @@ interface FetchExpiredCheckInsRequest {
 
 interface FetchExpiredCheckInsResponse {
   checkIns: CheckInWithDetails[];
+  total: number;
 }
 
 export class FetchExpiredCheckInsUseCase {
@@ -22,11 +23,11 @@ export class FetchExpiredCheckInsUseCase {
     const createdBefore = dayjs()
       .subtract(CHECK_IN_VALIDATION_WINDOW_IN_MINUTES, "minutes")
       .toDate();
-    const checkIns = await this.checkInsRepository.findManyExpiredCheckIns(
-      page,
-      createdBefore,
-    );
+    const [checkIns, total] = await Promise.all([
+      this.checkInsRepository.findManyExpiredCheckIns(page, createdBefore),
+      this.checkInsRepository.countExpiredCheckIns(createdBefore),
+    ]);
 
-    return { checkIns };
+    return { checkIns, total };
   }
 }

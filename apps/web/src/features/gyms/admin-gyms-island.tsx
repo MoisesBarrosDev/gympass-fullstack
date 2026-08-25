@@ -31,8 +31,10 @@ type GymAction = "deactivate" | "restore" | "permanent";
 
 export function AdminGymsIsland() {
   const [gyms, setGyms] = useState<Gym[]>([]);
+  const [totalGyms, setTotalGyms] = useState(0);
   const [page, setPage] = useState(1);
   const [deleted, setDeleted] = useState<Gym[]>([]);
+  const [totalDeleted, setTotalDeleted] = useState(0);
   const [deletedPage, setDeletedPage] = useState(1);
   const [editing, setEditing] = useState<Gym | "new" | null>(null);
   const [confirmation, setConfirmation] = useState<{
@@ -45,9 +47,11 @@ export function AdminGymsIsland() {
   const loadGyms = useCallback(
     async (requestedPage = 1) => {
       try {
-        setGyms(
-          (await api<{ gyms: Gym[] }>(`/gyms?page=${requestedPage}`)).gyms,
+        const result = await api<{ gyms: Gym[]; total: number }>(
+          `/gyms?page=${requestedPage}`,
         );
+        setGyms(result.gyms);
+        setTotalGyms(result.total);
         setPage(requestedPage);
       } catch (cause) {
         notify(getErrorMessage(cause), true);
@@ -58,10 +62,11 @@ export function AdminGymsIsland() {
   const loadDeleted = useCallback(
     async (requestedPage = 1) => {
       try {
-        setDeleted(
-          (await api<{ gyms: Gym[] }>(`/gyms/deleted?page=${requestedPage}`))
-            .gyms,
+        const result = await api<{ gyms: Gym[]; total: number }>(
+          `/gyms/deleted?page=${requestedPage}`,
         );
+        setDeleted(result.gyms);
+        setTotalDeleted(result.total);
         setDeletedPage(requestedPage);
       } catch (cause) {
         notify(getErrorMessage(cause), true);
@@ -130,6 +135,7 @@ export function AdminGymsIsland() {
       <GymTable
         title="Unidades ativas"
         gyms={gyms}
+        total={totalGyms}
         page={page}
         setPage={loadGyms}
         empty="Nenhuma academia ativa."
@@ -139,7 +145,7 @@ export function AdminGymsIsland() {
       <section className="panel deleted-panel">
         <Section
           title="Unidades excluídas"
-          meta={`${deleted.length} academias nesta página`}
+          meta={`${deleted.length} nesta página · ${totalDeleted} no total`}
           action={
             deleted.length > 0 ? (
               <button
@@ -232,6 +238,7 @@ export function AdminGymsIsland() {
 function GymTable({
   title,
   gyms,
+  total,
   page,
   setPage,
   empty,
@@ -240,6 +247,7 @@ function GymTable({
 }: {
   title: string;
   gyms: Gym[];
+  total: number;
   page: number;
   setPage: (page: number) => void;
   empty: string;
@@ -248,7 +256,10 @@ function GymTable({
 }) {
   return (
     <section className="panel">
-      <Section title={title} meta={`${gyms.length} academias nesta página`} />
+      <Section
+        title={title}
+        meta={`${gyms.length} nesta página · ${total} no total`}
+      />
       {gyms.length === 0 ? (
         <div className="empty-row">{empty}</div>
       ) : (

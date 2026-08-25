@@ -10,7 +10,7 @@ export async function fetchExpiredCheckIns(
     page: z.coerce.number().int().positive().default(1),
   });
   const { page } = querySchema.parse(req.query);
-  const { checkIns } = await makeFetchExpiredCheckInsUseCase().execute({ page });
+  const { checkIns, total } = await makeFetchExpiredCheckInsUseCase().execute({ page });
 
-  return reply.status(200).send({ checkIns });
+  return reply.status(200).send({ checkIns, total });
 }

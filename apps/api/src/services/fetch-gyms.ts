@@ -7,6 +7,7 @@ interface FetchGymsUseCaseRequest {
 
 interface FetchGymsUseCaseResponse {
   gyms: Gym[];
+  total: number;
 }
 
 export class FetchGymsUseCase {
@@ -15,10 +16,14 @@ export class FetchGymsUseCase {
   async execute({
     page,
   }: FetchGymsUseCaseRequest): Promise<FetchGymsUseCaseResponse> {
-    const gyms = await this.gymsRepository.findManyGyms(page);
+    const [gyms, total] = await Promise.all([
+      this.gymsRepository.findManyGyms(page),
+      this.gymsRepository.countActiveGyms(),
+    ]);
 
     return {
       gyms,
+      total,
     };
   }
 }

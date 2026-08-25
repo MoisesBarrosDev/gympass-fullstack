@@ -10,7 +10,7 @@ export async function fetchPendingCheckIns(
     page: z.coerce.number().int().positive().default(1),
   });
   const { page } = querySchema.parse(req.query);
-  const { checkIns } = await makeFetchPendingCheckInsUseCase().execute({ page });
+  const { checkIns, total } = await makeFetchPendingCheckInsUseCase().execute({ page });
 
-  return reply.status(200).send({ checkIns });
+  return reply.status(200).send({ checkIns, total });
 }

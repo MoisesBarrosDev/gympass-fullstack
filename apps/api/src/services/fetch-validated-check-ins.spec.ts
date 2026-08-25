@@ -31,9 +31,10 @@ describe("Fetch validated check-ins", () => {
     newer.validated_at = new Date("2026-08-24T10:00:00.000Z");
     await checkInsRepository.saveCheckIn(newer);
 
-    const { checkIns } = await sut.execute({ page: 1 });
+    const { checkIns, total } = await sut.execute({ page: 1 });
 
     expect(checkIns).toHaveLength(2);
+    expect(total).toBe(2);
     expect(checkIns.map((checkIn) => checkIn.id)).toEqual([
       newer.id,
       older.id,

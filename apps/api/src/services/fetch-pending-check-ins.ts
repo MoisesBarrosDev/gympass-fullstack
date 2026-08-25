@@ -11,6 +11,7 @@ interface FetchPendingCheckInsRequest {
 
 interface FetchPendingCheckInsResponse {
   checkIns: CheckInWithDetails[];
+  total: number;
 }
 
 export class FetchPendingCheckInsUseCase {
@@ -22,11 +23,11 @@ export class FetchPendingCheckInsUseCase {
     const createdAfter = dayjs()
       .subtract(CHECK_IN_VALIDATION_WINDOW_IN_MINUTES, "minutes")
       .toDate();
-    const checkIns = await this.checkInsRepository.findManyPendingCheckIns(
-      page,
-      createdAfter,
-    );
+    const [checkIns, total] = await Promise.all([
+      this.checkInsRepository.findManyPendingCheckIns(page, createdAfter),
+      this.checkInsRepository.countPendingCheckIns(createdAfter),
+    ]);
 
-    return { checkIns };
+    return { checkIns, total };
   }
 }

@@ -16,10 +16,13 @@ import type { CheckIn } from "@/lib/domain";
 
 export function AdminCheckInsIsland() {
   const [pending, setPending] = useState<CheckIn[]>([]);
+  const [pendingTotal, setPendingTotal] = useState(0);
   const [pendingPage, setPendingPage] = useState(1);
   const [validated, setValidated] = useState<CheckIn[]>([]);
+  const [validatedTotal, setValidatedTotal] = useState(0);
   const [validatedPage, setValidatedPage] = useState(1);
   const [expired, setExpired] = useState<CheckIn[]>([]);
+  const [expiredTotal, setExpiredTotal] = useState(0);
   const [expiredPage, setExpiredPage] = useState(1);
   const [count, setCount] = useState(0);
   const [deleting, setDeleting] = useState<CheckIn | null>(null);
@@ -28,13 +31,11 @@ export function AdminCheckInsIsland() {
   const loadPending = useCallback(
     async (page = 1) => {
       try {
-        setPending(
-          (
-            await api<{ checkIns: CheckIn[] }>(
-              `/check-ins/pending?page=${page}`,
-            )
-          ).checkIns,
+        const result = await api<{ checkIns: CheckIn[]; total: number }>(
+          `/check-ins/pending?page=${page}`,
         );
+        setPending(result.checkIns);
+        setPendingTotal(result.total);
         setPendingPage(page);
       } catch (cause) {
         notify(getErrorMessage(cause), true);
@@ -45,13 +46,11 @@ export function AdminCheckInsIsland() {
   const loadValidated = useCallback(
     async (page = 1) => {
       try {
-        setValidated(
-          (
-            await api<{ checkIns: CheckIn[] }>(
-              `/check-ins/validated?page=${page}`,
-            )
-          ).checkIns,
+        const result = await api<{ checkIns: CheckIn[]; total: number }>(
+          `/check-ins/validated?page=${page}`,
         );
+        setValidated(result.checkIns);
+        setValidatedTotal(result.total);
         setValidatedPage(page);
       } catch (cause) {
         notify(getErrorMessage(cause), true);
@@ -62,13 +61,11 @@ export function AdminCheckInsIsland() {
   const loadExpired = useCallback(
     async (page = 1) => {
       try {
-        setExpired(
-          (
-            await api<{ checkIns: CheckIn[] }>(
-              `/check-ins/expired?page=${page}`,
-            )
-          ).checkIns,
+        const result = await api<{ checkIns: CheckIn[]; total: number }>(
+          `/check-ins/expired?page=${page}`,
         );
+        setExpired(result.checkIns);
+        setExpiredTotal(result.total);
         setExpiredPage(page);
       } catch (cause) {
         notify(getErrorMessage(cause), true);
@@ -132,6 +129,7 @@ export function AdminCheckInsIsland() {
       <CheckInPanel
         kind="pending"
         checks={pending}
+        total={pendingTotal}
         page={pendingPage}
         setPage={loadPending}
         validate={validate}
@@ -139,12 +137,14 @@ export function AdminCheckInsIsland() {
       <CheckInPanel
         kind="validated"
         checks={validated}
+        total={validatedTotal}
         page={validatedPage}
         setPage={loadValidated}
       />
       <CheckInPanel
         kind="expired"
         checks={expired}
+        total={expiredTotal}
         page={expiredPage}
         setPage={loadExpired}
         remove={setDeleting}
@@ -164,6 +164,7 @@ type PanelKind = "pending" | "validated" | "expired";
 function CheckInPanel({
   kind,
   checks,
+  total,
   page,
   setPage,
   validate,
@@ -171,6 +172,7 @@ function CheckInPanel({
 }: {
   kind: PanelKind;
   checks: CheckIn[];
+  total: number;
   page: number;
   setPage: (page: number) => void;
   validate?: (id: string) => void;
@@ -179,19 +181,16 @@ function CheckInPanel({
   const copy = {
     pending: {
       title: "Check-ins aguardando validação",
-      meta: "pendente(s)",
       empty: "Nenhum check-in dentro do prazo de validação.",
       icon: "clock" as const,
     },
     validated: {
       title: "Check-ins validados",
-      meta: "validado(s)",
       empty: "Nenhum check-in validado.",
       icon: "check" as const,
     },
     expired: {
       title: "Check-ins expirados",
-      meta: "expirado(s)",
       empty: "Nenhum check-in expirado.",
       icon: "close" as const,
     },
@@ -200,7 +199,7 @@ function CheckInPanel({
     <section className="panel pending-panel">
       <Section
         title={copy.title}
-        meta={`${checks.length} ${copy.meta} nesta página`}
+        meta={`${checks.length} nesta página · ${total} no total`}
       />
       {checks.length === 0 ? (
         <div className="empty-row">{copy.empty}</div>

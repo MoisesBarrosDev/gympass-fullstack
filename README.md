@@ -8,19 +8,50 @@ O projeto foi desenvolvido com Next.js, Fastify, TypeScript, PostgreSQL e Prisma
 
 ## Preview
 
-### Área do usuário
+### Descoberta de academias
 
-![Tela inicial](./docs/images/user-home.png)
+Busca por nome ou proximidade, detalhes das unidades e check-in com geolocalização.
 
-![Busca de academias](./docs/images/user-gyms.png)
+![Descoberta de academias e realização de check-in](./docs/images/member-discovery.png)
 
-![Perfil do usuário](./docs/images/user-profile.png)
+### Jornada do usuário
+
+Histórico completo com status pendente, validado ou expirado e métricas pessoais.
+
+![Jornada e histórico de check-ins do usuário](./docs/images/member-journey.png)
 
 ### Área administrativa
 
-![Dashboard administrativo](./docs/images/admin-dashboard.png)
+Validação de check-ins e acompanhamento separado por status.
+
+![Painel administrativo de check-ins](./docs/images/admin-checkins.png)
+
+Gerenciamento paginado de academias, com totais, edição e exclusão.
 
 ![Gerenciamento de academias](./docs/images/admin-gyms.png)
+
+### Outros fluxos
+
+<details>
+<summary>Cadastro de usuário</summary>
+
+![Cadastro de usuário](./docs/images/auth-register.png)
+
+</details>
+
+<details>
+<summary>Cadastro de academia</summary>
+
+![Formulário administrativo de cadastro de academia](./docs/images/admin-create-gym.png)
+
+</details>
+
+<details>
+<summary>Desativação e recuperação de academias</summary>
+
+![Gerenciamento do ciclo de vida das academias](./docs/images/admin-gym-lifecycle.png)
+
+</details>
 
 ---
 
@@ -146,10 +177,6 @@ Após iniciar a API, a documentação pode ser acessada em:
 ```text
 http://localhost:3333/docs
 ```
-
-### Swagger
-
-![Documentação Swagger](./docs/images/swagger.png)
 
 A documentação permite visualizar e testar os endpoints disponíveis, parâmetros, bodies, respostas e status codes da API.
 
@@ -347,12 +374,13 @@ As imagens utilizadas neste README estão organizadas em:
 ```text
 docs/
 └── images/
-    ├── user-home.png
-    ├── user-gyms.png
-    ├── user-profile.png
-    ├── admin-dashboard.png
+    ├── auth-register.png
+    ├── member-discovery.png
+    ├── member-journey.png
+    ├── admin-checkins.png
     ├── admin-gyms.png
-    └── swagger.png
+    ├── admin-create-gym.png
+    └── admin-gym-lifecycle.png
 ```
 
 ---

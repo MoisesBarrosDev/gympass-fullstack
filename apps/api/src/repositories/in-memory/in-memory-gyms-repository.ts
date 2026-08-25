@@ -111,6 +111,14 @@ export class InMemoryGymsRepository implements GymsRepository {
     return count;
   }
 
+  async countActiveGyms(): Promise<number> {
+    return this.items.length;
+  }
+
+  async countDeletedGyms(): Promise<number> {
+    return this.deletedGyms.length;
+  }
+
   async findDeletedGymById(id: string) {
     const gym = this.deletedGyms.find((item) => item.id === id);
 

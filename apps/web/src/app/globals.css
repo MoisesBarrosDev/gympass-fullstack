@@ -8,3 +8,4 @@
 .expired-check-row>i{background:#fff0ee;color:#a33d34}.expired-check-row .danger{color:#a33d34}.expired-check-row .danger:hover{background:#fff0ee;border-color:#e4b9b5}
 .validated-check-row{grid-template-columns:44px 1fr 1fr}.validated-check-row>i{background:#e6f5de;color:#457d2c}@media(max-width:700px){.validated-check-row{grid-template-columns:40px 1fr}.validated-check-row>div:nth-of-type(2){grid-column:2}}
 .pagination{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:24px}.pagination .secondary{min-height:40px}.pagination button:first-child svg{transform:rotate(180deg)}.pagination>span{color:var(--muted);font-size:12px}.pagination>span strong{color:var(--ink)}@media(max-width:450px){.pagination{gap:8px}.pagination .secondary{padding:0 12px}}
+.card-body>p{margin-bottom:18px}

@@ -24,6 +24,8 @@ export interface GymsRepository {
   restoreGymById(id: string): Promise<Gym | null>;
   permanentlyDeleteGymById(id: string): Promise<Gym | null>;
   permanentlyDeleteAllGyms(): Promise<number>;
+  countActiveGyms(): Promise<number>;
+  countDeletedGyms(): Promise<number>;
   findManyGyms(page: number): Promise<Gym[]>;
   findManyDeletedGyms(page: number): Promise<Gym[]>;
   searchManyGyms(query: string, page: number): Promise<Gym[]>;

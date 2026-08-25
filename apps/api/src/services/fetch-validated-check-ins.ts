@@ -9,6 +9,7 @@ interface FetchValidatedCheckInsRequest {
 
 interface FetchValidatedCheckInsResponse {
   checkIns: CheckInWithDetails[];
+  total: number;
 }
 
 export class FetchValidatedCheckInsUseCase {
@@ -17,9 +18,11 @@ export class FetchValidatedCheckInsUseCase {
   async execute({
     page,
   }: FetchValidatedCheckInsRequest): Promise<FetchValidatedCheckInsResponse> {
-    const checkIns =
-      await this.checkInsRepository.findManyValidatedCheckIns(page);
+    const [checkIns, total] = await Promise.all([
+      this.checkInsRepository.findManyValidatedCheckIns(page),
+      this.checkInsRepository.countAllValidatedCheckIns(),
+    ]);
 
-    return { checkIns };
+    return { checkIns, total };
   }
 }

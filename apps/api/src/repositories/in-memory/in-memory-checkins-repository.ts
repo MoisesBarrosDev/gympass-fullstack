@@ -100,6 +100,22 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
     return checkIns.length;
   }
 
+  async countCheckInsByUserId(userId: string): Promise<number> {
+    return this.items.filter((item) => item.user_id === userId).length;
+  }
+
+  async countPendingCheckIns(createdAfter: Date): Promise<number> {
+    return this.items.filter(
+      (item) => item.validated_at === null && item.created_at >= createdAfter,
+    ).length;
+  }
+
+  async countExpiredCheckIns(createdBefore: Date): Promise<number> {
+    return this.items.filter(
+      (item) => item.validated_at === null && item.created_at < createdBefore,
+    ).length;
+  }
+
   async findCheckInById(id: string) {
     const checkIn = this.items.find((item) => item.id === id);
 

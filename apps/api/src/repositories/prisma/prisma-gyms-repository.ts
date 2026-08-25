@@ -85,6 +85,14 @@ export class PrismaGymsRepository implements GymsRepository {
     return count;
   }
 
+  async countActiveGyms() {
+    return prisma.gym.count({ where: { deleted_at: null } });
+  }
+
+  async countDeletedGyms() {
+    return prisma.gym.count({ where: { deleted_at: { not: null } } });
+  }
+
   async findManyGyms(page: number) {
     const gyms = await prisma.gym.findMany({
       where: { deleted_at: null },

@@ -23,8 +23,8 @@ app.register(fastifySwagger, {
     },
     servers: [
       {
-        url: "http://localhost:3333",
-        description: "Ambiente local",
+        url: "/",
+        description: "Servidor atual",
       },
     ],
     tags: [
@@ -83,6 +83,15 @@ app.register(fastifyJwt, {
 });
 
 app.register(fastifyCookie);
+
+app.get("/", async () => ({
+  name: "GymPass API",
+  status: "online",
+  documentation: "/docs",
+}));
+
+app.get("/health", async () => ({ status: "ok" }));
+
 app.register(usersRoutes);
 app.register(gymsRoutes);
 app.register(checkInsRoutes);

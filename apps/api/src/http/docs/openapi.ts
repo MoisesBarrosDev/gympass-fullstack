@@ -86,7 +86,10 @@ const authErrors = {
 
 const adminErrors = {
   ...authErrors,
-  403: { description: "Acesso permitido apenas para administradores", ...messageResponse },
+  403: {
+    description: "Acesso permitido apenas para administradores",
+    ...messageResponse,
+  },
 };
 
 const routeDocumentation: Record<string, FastifySchema> = {
@@ -176,8 +179,18 @@ const routeDocumentation: Record<string, FastifySchema> = {
           nullable: true,
           example: "+55 21 99999-9999",
         },
-        latitude: { type: "number", minimum: -90, maximum: 90, example: -22.9068 },
-        longitude: { type: "number", minimum: -180, maximum: 180, example: -43.1729 },
+        latitude: {
+          type: "number",
+          minimum: -90,
+          maximum: 90,
+          example: -22.9068,
+        },
+        longitude: {
+          type: "number",
+          minimum: -180,
+          maximum: 180,
+          example: -43.1729,
+        },
       },
     },
     response: {
@@ -198,7 +211,10 @@ const routeDocumentation: Record<string, FastifySchema> = {
       200: {
         description: "Lista paginada de academias",
         type: "object",
-        properties: { gyms: { type: "array", items: gymResponse } },
+        properties: {
+          gyms: { type: "array", items: gymResponse },
+          total: { type: "integer" },
+        },
       },
       ...authErrors,
     },
@@ -232,8 +248,18 @@ const routeDocumentation: Record<string, FastifySchema> = {
       type: "object",
       required: ["userLatitude", "userLongitude"],
       properties: {
-        userLatitude: { type: "number", minimum: -90, maximum: 90, example: -22.9068 },
-        userLongitude: { type: "number", minimum: -180, maximum: 180, example: -43.1729 },
+        userLatitude: {
+          type: "number",
+          minimum: -90,
+          maximum: 90,
+          example: -22.9068,
+        },
+        userLongitude: {
+          type: "number",
+          minimum: -180,
+          maximum: 180,
+          example: -43.1729,
+        },
         ...pageQuery.properties,
       },
     },
@@ -256,7 +282,10 @@ const routeDocumentation: Record<string, FastifySchema> = {
       200: {
         description: "Academias removidas",
         type: "object",
-        properties: { gyms: { type: "array", items: gymResponse } },
+        properties: {
+          gyms: { type: "array", items: gymResponse },
+          total: { type: "integer" },
+        },
       },
       ...adminErrors,
     },
@@ -291,7 +320,8 @@ const routeDocumentation: Record<string, FastifySchema> = {
   "DELETE /gyms/:gymId": {
     tags: ["Academias"],
     summary: "Remover academia",
-    description: "Realiza uma remoção lógica. Operação exclusiva de administradores.",
+    description:
+      "Realiza uma remoção lógica. Operação exclusiva de administradores.",
     security: [{ bearerAuth: [] }],
     params: idParams("gymId"),
     response: {
@@ -353,8 +383,18 @@ const routeDocumentation: Record<string, FastifySchema> = {
       type: "object",
       required: ["userLatitude", "userLongitude"],
       properties: {
-        userLatitude: { type: "number", minimum: -90, maximum: 90, example: -22.9068 },
-        userLongitude: { type: "number", minimum: -180, maximum: 180, example: -43.1729 },
+        userLatitude: {
+          type: "number",
+          minimum: -90,
+          maximum: 90,
+          example: -22.9068,
+        },
+        userLongitude: {
+          type: "number",
+          minimum: -180,
+          maximum: 180,
+          example: -43.1729,
+        },
       },
     },
     response: {
@@ -364,9 +404,15 @@ const routeDocumentation: Record<string, FastifySchema> = {
         properties: { checkIn: checkInResponse },
       },
       ...authErrors,
-      400: { description: "Usuário fora da distância permitida", ...messageResponse },
+      400: {
+        description: "Usuário fora da distância permitida",
+        ...messageResponse,
+      },
       404: { description: "Academia não encontrada", ...messageResponse },
-      409: { description: "Limite diário de check-ins atingido", ...messageResponse },
+      409: {
+        description: "Limite diário de check-ins atingido",
+        ...messageResponse,
+      },
     },
   },
   "GET /check-ins/history": {
@@ -378,7 +424,10 @@ const routeDocumentation: Record<string, FastifySchema> = {
       200: {
         description: "Histórico de check-ins",
         type: "object",
-        properties: { checkIns: { type: "array", items: checkInResponse } },
+        properties: {
+          checkIns: { type: "array", items: checkInResponse },
+          total: { type: "integer" },
+        },
       },
       ...authErrors,
     },
@@ -406,7 +455,10 @@ const routeDocumentation: Record<string, FastifySchema> = {
       200: {
         description: "Check-ins pendentes",
         type: "object",
-        properties: { checkIns: { type: "array", items: checkInResponse } },
+        properties: {
+          checkIns: { type: "array", items: checkInResponse },
+          total: { type: "integer" },
+        },
       },
       ...adminErrors,
     },
@@ -421,7 +473,10 @@ const routeDocumentation: Record<string, FastifySchema> = {
       200: {
         description: "Check-ins expirados",
         type: "object",
-        properties: { checkIns: { type: "array", items: checkInResponse } },
+        properties: {
+          checkIns: { type: "array", items: checkInResponse },
+          total: { type: "integer" },
+        },
       },
       ...adminErrors,
     },
@@ -436,7 +491,10 @@ const routeDocumentation: Record<string, FastifySchema> = {
       200: {
         description: "Check-ins validados",
         type: "object",
-        properties: { checkIns: { type: "array", items: checkInResponse } },
+        properties: {
+          checkIns: { type: "array", items: checkInResponse },
+          total: { type: "integer" },
+        },
       },
       ...adminErrors,
     },

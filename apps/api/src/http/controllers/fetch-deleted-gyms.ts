@@ -10,7 +10,7 @@ export async function fetchDeletedGyms(
     page: z.coerce.number().int().positive().default(1),
   });
   const { page } = querySchema.parse(req.query);
-  const { gyms } = await makeFetchDeletedGymsUseCase().execute({ page });
+  const { gyms, total } = await makeFetchDeletedGymsUseCase().execute({ page });
 
-  return reply.status(200).send({ gyms });
+  return reply.status(200).send({ gyms, total });
 }

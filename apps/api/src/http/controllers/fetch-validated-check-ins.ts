@@ -10,9 +10,9 @@ export async function fetchValidatedCheckIns(
     page: z.coerce.number().int().positive().default(1),
   });
   const { page } = querySchema.parse(req.query);
-  const { checkIns } = await makeFetchValidatedCheckInsUseCase().execute({
+  const { checkIns, total } = await makeFetchValidatedCheckInsUseCase().execute({
     page,
   });
 
-  return reply.status(200).send({ checkIns });
+  return reply.status(200).send({ checkIns, total });
 }
