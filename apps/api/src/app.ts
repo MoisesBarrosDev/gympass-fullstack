@@ -107,3 +107,5 @@ app.setErrorHandler((error, _request, reply) => {
   }
   return reply.status(500).send({ message: "Internal server error." });
 });
+
+export default app;
