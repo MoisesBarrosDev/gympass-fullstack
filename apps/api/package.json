@@ -4,9 +4,9 @@
   "description": "GymPass style app.",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "start": "node build/server.js",
-    "build": "prisma generate && tsup src/server.ts --out-dir build --format esm --clean",
+    "dev": "tsx watch src/app.ts",
+    "start": "node build/app.js",
+    "build": "prisma generate && tsup src/app.ts --out-dir build --format esm --clean",
     "test": "vitest run --project unit",
     "test:e2e": "vitest run --project e2e",
     "test:watch": "vitest --project unit",

@@ -108,4 +108,11 @@ app.setErrorHandler((error, _request, reply) => {
   return reply.status(500).send({ message: "Internal server error." });
 });
 
+if (env.NODE_ENV !== "test") {
+  await app.listen({
+    host: "0.0.0.0",
+    port: env.PORT,
+  });
+}
+
 export default app;
