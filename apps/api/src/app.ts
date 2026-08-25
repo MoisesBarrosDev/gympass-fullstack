@@ -1,4 +1,5 @@
 import fastify from "fastify";
+import type { IncomingMessage, ServerResponse } from "node:http";
 import { ZodError } from "zod";
 import { env } from "./env/index.js";
 import fastifyJwt from "@fastify/jwt";
@@ -108,11 +109,12 @@ app.setErrorHandler((error, _request, reply) => {
   return reply.status(500).send({ message: "Internal server error." });
 });
 
-if (env.NODE_ENV !== "test") {
-  await app.listen({
-    host: "0.0.0.0",
-    port: env.PORT,
-  });
-}
+const appReady = app.ready();
 
-export default app;
+export default async function handler(
+  request: IncomingMessage,
+  response: ServerResponse<IncomingMessage>,
+) {
+  await appReady;
+  app.server.emit("request", request, response);
+}
