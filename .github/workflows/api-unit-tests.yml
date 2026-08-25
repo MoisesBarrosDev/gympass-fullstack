@@ -17,11 +17,11 @@ jobs:
       DATABASE_URL: postgresql://docker:docker@localhost:5432/apisolid?schema=public
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: '20.19'
+          node-version: '24'
           cache: npm
           cache-dependency-path: apps/api/package-lock.json
 
