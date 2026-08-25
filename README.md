@@ -172,11 +172,11 @@ Essa separação facilita a manutenção, os testes e a substituição de implem
 
 A API possui documentação interativa utilizando Swagger/OpenAPI.
 
-Após iniciar a API, a documentação pode ser acessada em:
+A documentação publicada pode ser acessada em:
 
-```text
-http://localhost:3333/docs
-```
+[Acessar documentação da API](https://gympass-fullstack.vercel.app/docs)
+
+Para desenvolvimento local, após iniciar a API, acesse `http://localhost:3333/docs`.
 
 A documentação permite visualizar e testar os endpoints disponíveis, parâmetros, bodies, respostas e status codes da API.
 
