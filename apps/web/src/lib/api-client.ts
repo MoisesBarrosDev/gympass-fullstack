@@ -1,3 +1,33 @@
+let accessToken: string | null = null;
+let refreshPromise: Promise<string | null> | null = null;
+
+export function setAccessToken(token: string | null) {
+  accessToken = token;
+}
+
+export async function refreshAccessToken() {
+  if (!refreshPromise) {
+    refreshPromise = fetch("/api/sessions/refresh", {
+      method: "POST",
+      credentials: "include",
+    })
+      .then(async (response) => {
+        if (!response.ok) return null;
+
+        const data = (await response.json()) as { token: string };
+        return data.token;
+      })
+      .catch(() => null)
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+
+  const token = await refreshPromise;
+  setAccessToken(token);
+  return token !== null;
+}
+
 export function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : "Algo deu errado.";
 }
@@ -8,11 +38,9 @@ export async function api<T>(
   retry = true,
 ): Promise<T> {
   const headers = new Headers(options.headers);
-  const token =
-    typeof window === "undefined" ? null : localStorage.getItem("accessToken");
 
   if (options.body) headers.set("Content-Type", "application/json");
-  if (token) headers.set("Authorization", `Bearer ${token}`);
+  if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`);
 
   let response = await fetch(`/api${path}`, {
     ...options,
@@ -21,15 +49,8 @@ export async function api<T>(
   });
 
   if (response.status === 401 && retry && !path.includes("sessions")) {
-    const refresh = await fetch("/api/sessions/refresh", {
-      method: "POST",
-      credentials: "include",
-    });
-
-    if (refresh.ok) {
-      const data = (await refresh.json()) as { token: string };
-      localStorage.setItem("accessToken", data.token);
-      headers.set("Authorization", `Bearer ${data.token}`);
+    if (await refreshAccessToken()) {
+      headers.set("Authorization", `Bearer ${accessToken}`);
       response = await fetch(`/api${path}`, {
         ...options,
         headers,

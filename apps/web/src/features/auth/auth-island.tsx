@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { Icon } from "@/components/ui/icon";
 import { Logo } from "@/components/ui/primitives";
-import { api, getErrorMessage } from "@/lib/api-client";
+import { api, getErrorMessage, setAccessToken } from "@/lib/api-client";
 import type { User } from "@/lib/domain";
 
 export function AuthIsland({
@@ -35,7 +35,7 @@ export function AuthIsland({
         method: "POST",
         body: JSON.stringify({ email, password }),
       });
-      localStorage.setItem("accessToken", token);
+      setAccessToken(token);
       onAuthenticated(await api<User>("/me"));
     } catch (cause) {
       setError(getErrorMessage(cause));

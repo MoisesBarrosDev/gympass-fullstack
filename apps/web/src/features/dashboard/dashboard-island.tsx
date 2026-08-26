@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import { Icon, type IconName } from "@/components/ui/icon";
 import { Logo } from "@/components/ui/primitives";
-import { api } from "@/lib/api-client";
+import { api, setAccessToken } from "@/lib/api-client";
 import type { DashboardView, User } from "@/lib/domain";
 
 const DiscoveryIsland = dynamic(
@@ -47,7 +47,7 @@ export function DashboardIsland({
 
   async function logout() {
     await api("/sessions/logout", { method: "POST" }).catch(() => undefined);
-    localStorage.removeItem("accessToken");
+    setAccessToken(null);
     onLogout();
   }
 

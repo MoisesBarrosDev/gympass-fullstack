@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/ui/primitives";
-import { api } from "@/lib/api-client";
+import { api, refreshAccessToken, setAccessToken } from "@/lib/api-client";
 import type { User } from "@/lib/domain";
 import { AuthIsland } from "@/features/auth/auth-island";
 import { DashboardIsland } from "@/features/dashboard/dashboard-island";
@@ -14,10 +14,11 @@ export function GympassApplication() {
   useEffect(() => {
     async function restoreSession() {
       try {
-        if (!localStorage.getItem("accessToken")) return;
+        localStorage.removeItem("accessToken");
+        if (!(await refreshAccessToken())) return;
         setUser(await api<User>("/me"));
       } catch {
-        localStorage.removeItem("accessToken");
+        setAccessToken(null);
       } finally {
         setBooting(false);
       }
