@@ -15,6 +15,7 @@ jobs:
       NODE_ENV: test
       JWT_SECRET: testing
       DATABASE_URL: postgresql://docker:docker@localhost:5432/apisolid?schema=public
+      DIRECT_URL: postgresql://docker:docker@localhost:5432/apisolid?schema=public
 
     steps:
       - uses: actions/checkout@v6
