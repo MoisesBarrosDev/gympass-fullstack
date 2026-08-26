@@ -393,7 +393,7 @@ docs/
 
 ## Status do projeto
 
-🚧 Projeto em desenvolvimento.
+✅ Projeto concluído.
 
 Atualmente o projeto possui:
 
