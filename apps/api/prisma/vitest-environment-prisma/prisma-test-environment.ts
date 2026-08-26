@@ -4,12 +4,16 @@ import { randomUUID } from "node:crypto";
 import { Client } from "pg";
 import type { Environment } from "vitest/environments";
 
-function generateDatabaseUrl(schema: string) {
-  if (!process.env.DATABASE_URL) {
-    throw new Error("Please provide a DATABASE_URL environment variable.");
+function addSchemaToDatabaseUrl(
+  databaseUrl: string | undefined,
+  schema: string,
+  variableName: string,
+) {
+  if (!databaseUrl) {
+    throw new Error(`Please provide a ${variableName} environment variable.`);
   }
 
-  const url = new URL(process.env.DATABASE_URL);
+  const url = new URL(databaseUrl);
 
   url.searchParams.set("schema", schema);
 
@@ -22,11 +26,22 @@ export default <Environment>{
 
   setup(global) {
     const schema = randomUUID();
-    const databaseUrl = generateDatabaseUrl(schema);
+    const databaseUrl = addSchemaToDatabaseUrl(
+      process.env.DATABASE_URL,
+      schema,
+      "DATABASE_URL",
+    );
+    const directUrl = addSchemaToDatabaseUrl(
+      process.env.DIRECT_URL,
+      schema,
+      "DIRECT_URL",
+    );
 
     process.env.DATABASE_URL = databaseUrl;
+    process.env.DIRECT_URL = directUrl;
     process.env.NODE_ENV = "test";
     global.process.env.DATABASE_URL = databaseUrl;
+    global.process.env.DIRECT_URL = directUrl;
     global.process.env.NODE_ENV = "test";
 
     execFileSync("npx", ["prisma", "migrate", "deploy"], {
