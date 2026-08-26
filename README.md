@@ -6,6 +6,12 @@ O projeto foi desenvolvido com Next.js, Fastify, TypeScript, PostgreSQL e Prisma
 
 ---
 
+## 🚀 Deploy
+
+🔗 Acesse o projeto em produção: 👉 [https://gympass-web.vercel.app/](https://gympass-web.vercel.app/)
+
+---
+
 ## Preview
 
 ### Descoberta de academias
