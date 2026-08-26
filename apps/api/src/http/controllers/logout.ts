@@ -14,8 +14,9 @@ export async function logout(req: FastifyRequest, reply: FastifyReply) {
   }
 
   return reply
+    .header("Cache-Control", "no-store")
     .clearCookie("refreshToken", {
-      path: "/sessions",
+      path: "/",
     })
     .status(204)
     .send();

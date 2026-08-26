@@ -35,9 +35,18 @@ describe("Authenticate controller (E2E)", () => {
     expect(response.json()).toEqual({
       token: expect.any(String),
     });
+    expect(response.headers["cache-control"]).toBe("no-store");
     expect(response.headers["set-cookie"]).toEqual(
       expect.stringContaining("refreshToken="),
     );
+    expect(response.headers["set-cookie"]).toEqual(
+      expect.stringContaining("Max-Age=604800"),
+    );
+
+    const { token } = response.json<{ token: string }>();
+    const payload = app.jwt.decode<{ exp: number; iat: number }>(token);
+    if (!payload) throw new Error("Access token payload was not returned.");
+    expect(payload.exp - payload.iat).toBe(15 * 60);
 
     const user = await prisma.user.findUniqueOrThrow({
       where: { email: "john.doe@example.com" },

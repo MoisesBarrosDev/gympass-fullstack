@@ -17,11 +17,12 @@ describe("Logout controller (E2E)", () => {
     });
 
     expect(response.statusCode).toBe(204);
+    expect(response.headers["cache-control"]).toBe("no-store");
     const setCookie = response.headers["set-cookie"];
     const clearedCookie = Array.isArray(setCookie) ? setCookie[0] : setCookie;
     expect(clearedCookie).toContain("refreshToken=");
     expect(clearedCookie).toContain("Max-Age=0");
-    expect(clearedCookie).toContain("Path=/sessions");
+    expect(clearedCookie).toContain("Path=/");
 
     const user = await prisma.user.findUniqueOrThrow({
       where: { email: "john.doe@example.com" },

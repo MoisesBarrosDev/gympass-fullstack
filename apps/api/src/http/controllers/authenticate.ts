@@ -5,6 +5,12 @@ import { env } from "../../env/index.js";
 import { InvalidCredentialsError } from "../../services/errors/invalid-credential-error.js";
 import { makeAuthenticateUseCase } from "../../services/factories/make-authenticate-use-case.js";
 import { makeCreateRefreshTokenUseCase } from "../../services/factories/make-create-refresh-token-use-case.js";
+import {
+  ACCESS_TOKEN_EXPIRES_IN,
+  getRefreshTokenExpiresAt,
+  REFRESH_TOKEN_EXPIRES_IN,
+  REFRESH_TOKEN_MAX_AGE,
+} from "../auth-config.js";
 
 export async function authenticate(req: FastifyRequest, reply: FastifyReply) {
   const authenticateBodySchema = z.object({
@@ -24,13 +30,13 @@ export async function authenticate(req: FastifyRequest, reply: FastifyReply) {
       {
         sign: {
           sub: user.id,
-          expiresIn: "1d",
+          expiresIn: ACCESS_TOKEN_EXPIRES_IN,
         },
       },
     );
 
     const refreshTokenId = randomUUID();
-    const refreshTokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const refreshTokenExpiresAt = getRefreshTokenExpiresAt();
 
     await makeCreateRefreshTokenUseCase().execute({
       id: refreshTokenId,
@@ -43,18 +49,19 @@ export async function authenticate(req: FastifyRequest, reply: FastifyReply) {
       {
         sign: {
           sub: user.id,
-          expiresIn: "1d",
+          expiresIn: REFRESH_TOKEN_EXPIRES_IN,
         },
       },
     );
 
     return reply
+      .header("Cache-Control", "no-store")
       .setCookie("refreshToken", refreshToken, {
-        path: "/sessions",
+        path: "/",
         secure: env.NODE_ENV === "production",
         sameSite: "strict",
         httpOnly: true,
-        maxAge: 60 * 60 * 24,
+        maxAge: REFRESH_TOKEN_MAX_AGE,
       })
       .status(200)
       .send({ token });

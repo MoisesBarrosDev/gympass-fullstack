@@ -2,6 +2,12 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import { randomUUID } from "node:crypto";
 import { env } from "../../env/index.js";
 import { makeRotateRefreshTokenUseCase } from "../../services/factories/make-rotate-refresh-token-use-case.js";
+import {
+  ACCESS_TOKEN_EXPIRES_IN,
+  getRefreshTokenExpiresAt,
+  REFRESH_TOKEN_EXPIRES_IN,
+  REFRESH_TOKEN_MAX_AGE,
+} from "../auth-config.js";
 
 export async function refresh(req: FastifyRequest, reply: FastifyReply) {
   try {
@@ -12,7 +18,7 @@ export async function refresh(req: FastifyRequest, reply: FastifyReply) {
     }
 
     const newRefreshTokenId = randomUUID();
-    const refreshTokenExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const refreshTokenExpiresAt = getRefreshTokenExpiresAt();
 
     const { user } = await makeRotateRefreshTokenUseCase().execute({
       currentTokenId: req.user.jti,
@@ -26,7 +32,7 @@ export async function refresh(req: FastifyRequest, reply: FastifyReply) {
       {
         sign: {
           sub: req.user.sub,
-          expiresIn: "1d",
+          expiresIn: ACCESS_TOKEN_EXPIRES_IN,
         },
       },
     );
@@ -36,18 +42,19 @@ export async function refresh(req: FastifyRequest, reply: FastifyReply) {
       {
         sign: {
           sub: req.user.sub,
-          expiresIn: "1d",
+          expiresIn: REFRESH_TOKEN_EXPIRES_IN,
         },
       },
     );
 
     return reply
+      .header("Cache-Control", "no-store")
       .setCookie("refreshToken", refreshToken, {
-        path: "/sessions",
+        path: "/",
         secure: env.NODE_ENV === "production",
         sameSite: "strict",
         httpOnly: true,
-        maxAge: 60 * 60 * 24,
+        maxAge: REFRESH_TOKEN_MAX_AGE,
       })
       .status(200)
       .send({ token });

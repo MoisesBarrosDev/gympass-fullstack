@@ -18,13 +18,20 @@ describe("Refresh token controller (E2E)", () => {
 
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual({ token: expect.any(String) });
+    expect(response.headers["cache-control"]).toBe("no-store");
+
+    const { token } = response.json<{ token: string }>();
+    const payload = app.jwt.decode<{ exp: number; iat: number }>(token);
+    if (!payload) throw new Error("Access token payload was not returned.");
+    expect(payload.exp - payload.iat).toBe(15 * 60);
 
     const setCookie = response.headers["set-cookie"];
     const newCookie = Array.isArray(setCookie) ? setCookie[0] : setCookie;
     expect(newCookie).toContain("refreshToken=");
     expect(newCookie).toContain("HttpOnly");
     expect(newCookie).toContain("SameSite=Strict");
-    expect(newCookie).toContain("Path=/sessions");
+    expect(newCookie).toContain("Path=/");
+    expect(newCookie).toContain("Max-Age=604800");
     expect(newCookie?.split(";")[0]).not.toBe(refreshTokenCookie);
 
     const user = await prisma.user.findUniqueOrThrow({
