@@ -12,7 +12,11 @@ import { verifyJWT } from "../middlewares/verify-jwt.js";
 import { verifyUserRole } from "../middlewares/verify-user-role.js";
 
 export async function checkInsRoutes(app: FastifyInstance) {
-  app.post("/gyms/:gymId/check-ins", { onRequest: [verifyJWT] }, checkIn);
+  app.post(
+    "/gyms/:gymId/check-ins",
+    { onRequest: [verifyJWT, verifyUserRole("MEMBER")] },
+    checkIn,
+  );
   app.get(
     "/check-ins/history",
     { onRequest: [verifyJWT] },

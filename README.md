@@ -294,6 +294,21 @@ Copie o arquivo de variáveis de ambiente:
 cp .env.example .env
 ```
 
+Antes de iniciar, preencha `JWT_SECRET` e `POSTGRES_PASSWORD` no novo `.env`.
+Gere valores aleatórios em vez de reutilizar os exemplos da documentação:
+
+```bash
+openssl rand -hex 32
+```
+
+Use uma saída para `JWT_SECRET` e gere outra para `POSTGRES_PASSWORD`. Atualize
+também a senha presente em `DATABASE_URL` e `DIRECT_URL`. Em produção, a API
+recusa segredos JWT públicos, comprometidos ou com menos de 64 caracteres.
+
+> Se o segredo JWT já tiver sido publicado ou compartilhado, gerar um novo valor
+> é obrigatório. Remover o valor do arquivo ou do histórico não invalida tokens
+> que já foram assinados com ele.
+
 Inicie os serviços necessários utilizando Docker:
 
 ```bash

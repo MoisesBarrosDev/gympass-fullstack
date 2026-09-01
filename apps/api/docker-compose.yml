@@ -2,8 +2,8 @@ services:
   api-solid-pg:
     image: bitnami/postgresql
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     environment:
-      POSTGRESQL_USERNAME: docker
-      POSTGRESQL_PASSWORD: docker
-      POSTGRESQL_DATABASE: apisolid
+      POSTGRESQL_USERNAME: ${POSTGRES_USER:?Set POSTGRES_USER in apps/api/.env}
+      POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in apps/api/.env}
+      POSTGRESQL_DATABASE: ${POSTGRES_DB:?Set POSTGRES_DB in apps/api/.env}
